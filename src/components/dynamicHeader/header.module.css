@@ -1,0 +1,31 @@
+.header {
+  display: flex;
+  flex-direction: column;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 20px;
+  }
+  
+  .userInfo {
+    font-size: 14px;
+  }
+  
+  button {
+    margin-left: 15px;
+    padding: 8px 12px;
+    background-color: #f44336;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #d32f2f;
+  }
+  
