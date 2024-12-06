@@ -3,12 +3,13 @@ import UserManagerOverview from "../components/admin/userManagement/UserManagerO
 import UserManager from "../components/admin/userManagement/UserManager";
 import AddUser from "../components/admin/userManagement/UserCreator";
 
-const UserManagerRoute = () => (
+const AdminRoutes = () => (
   <Routes>
-    <Route path="/" element={<UserManagerOverview />} />
+    <Route path="overview" element={<UserManagerOverview />} />
     <Route path="all-users" element={<UserManager />} />
     <Route path="add-user" element={<AddUser />} />
   </Routes>
 );
 
-export default UserManagerRoute;
+export default AdminRoutes;
+

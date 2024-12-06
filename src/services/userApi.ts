@@ -22,7 +22,13 @@ export const userApi = createApi({
   endpoints: (builder) => ({
     getUsers: builder.query<User[], void>({
       query: () => `/users`,
-      transformResponse: (response: { items: User[] }): User[] => response.items,
+      transformResponse: (response: { items: User[] }, meta) => {
+        console.log(`GET /users - Status: ${meta?.response?.status}`);
+        if (meta?.response?.status === 403) {
+          console.error("Mangler tilgang til å hente brukere.");
+        }
+        return response.items;
+      },
       providesTags: ["Users"],
     }),
     addUser: builder.mutation<void, Partial<User>>({
@@ -37,6 +43,14 @@ export const userApi = createApi({
           },
         ],
       }),
+      transformResponse: (_, meta) => {
+        console.log(`POST /users - Status: ${meta?.response?.status}`);
+        if (meta?.response?.status === 400) {
+          console.error("Brukeren finnes allerede.");
+        } else if (meta?.response?.status === 201) {
+          console.log("Bruker er opprettet.");
+        }
+      },
       invalidatesTags: ["Users"],
     }),
     updateUser: builder.mutation<void, Partial<User> & { _uuid: string }>({
@@ -45,6 +59,14 @@ export const userApi = createApi({
         method: "PUT",
         body: updatedUser,
       }),
+      transformResponse: (_, meta) => {
+        console.log(`Status: ${meta?.response?.status}`);
+        if (meta?.response?.status === 404) {
+          console.error("Brukeren ble ikke funnet.");
+        } else if (meta?.response?.status === 200) {
+          console.log("Bruker er oppdatert.");
+        }
+      },
       invalidatesTags: ["Users"],
     }),
     deleteUser: builder.mutation<void, string>({
@@ -52,6 +74,14 @@ export const userApi = createApi({
         url: `/users/${_uuid}`,
         method: "DELETE",
       }),
+      transformResponse: (_, meta) => {
+        console.log(`Status: ${meta?.response?.status}`);
+        if (meta?.response?.status === 404) {
+          console.error("Brukeren ble ikke funnet.");
+        } else if (meta?.response?.status === 200) {
+          console.log("Bruker er slettet.");
+        }
+      },
       invalidatesTags: ["Users"],
     }),
   }),
@@ -59,10 +89,12 @@ export const userApi = createApi({
 
 export const {
   useGetUsersQuery,
+  useLazyGetUsersQuery, // Legger til lazy query
   useAddUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
 } = userApi;
+
 
 
 

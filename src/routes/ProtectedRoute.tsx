@@ -11,7 +11,7 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
 
   // Hvis brukeren ikke er logget inn eller ikke har riktig rolle, send dem til login-siden
   if (!user.username || !allowedRoles.includes(user.role!)) {
-    return <Navigate to="/" />;
+    return <Navigate to="/login" />;
   }
 
   // Hvis brukeren har riktig rolle, vis innholdet i Outlet (barnruter)

@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { logout } from "../../redux/userSlice";
-import styles from "./Header.module.css";
+import styles from "./header.module.css";
 
 const Header = () => {
   const { role, username } = useSelector((state: RootState) => state.user);
@@ -11,29 +11,27 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <header className={styles.header}>
-      <h1 className={styles.logo}>Admin Panel</h1>
       <nav className={styles.navbar}>
         {role === "admin" && (
           <>
-            <button onClick={() => navigate("/adminPage/user")}>
+                <h1 className={styles.logo}>Admin Panel</h1>
+            <button onClick={() => navigate("/admin/user-management/overview")}>
               Brukeradministrasjon
             </button>
-            <button onClick={() => navigate("/adminPage/cv")}>
+            <button onClick={() => navigate("/admin/cv-management")}>
               CV-administrasjon
             </button>
           </>
         )}
         {role === "user" && (
           <>
-            <button onClick={() => navigate("/mypage/cvs")}>Mine CV-er</button>
-            <button onClick={() => navigate("/mypage/cv-management")}>
-              CV-administrasjon
-            </button>
+          <h1 className={styles.logo}>User Panel</h1>
+            <button onClick={() => navigate("/user/my-cv/home")}>Administrasjon av Cver</button>
           </>
         )}
       </nav>
@@ -48,4 +46,5 @@ const Header = () => {
 };
 
 export default Header;
+
 

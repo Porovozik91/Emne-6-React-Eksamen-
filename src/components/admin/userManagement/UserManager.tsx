@@ -6,6 +6,7 @@ import {
 } from "../../../services/userApi";
 import styles from "./userManager.module.css";
 import { User } from "../../../types/user.types";
+import hashPassword from "../../../utils/hashPassword"; // Importer hashing-funksjonen
 
 const UserManager = () => {
   const { data: users = [], isLoading, isError } = useGetUsersQuery();
@@ -28,6 +29,11 @@ const UserManager = () => {
   ) => {
     try {
       if (action === "update" && updatedData) {
+        // Hash passordet hvis det er oppgitt
+        if (updatedData.password) {
+          updatedData.password = await hashPassword(updatedData.password);
+        }
+
         await updateUser({ _uuid: userId, ...updatedData }).unwrap();
       } else if (action === "delete") {
         await deleteUser(userId).unwrap();
@@ -113,6 +119,7 @@ const UserManager = () => {
 };
 
 export default UserManager;
+
 
 
 
