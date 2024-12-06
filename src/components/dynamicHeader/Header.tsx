@@ -1,51 +1,51 @@
-import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { RootState } from "../../redux/store";
 import { logout } from "../../redux/userSlice";
-import { useCookies } from "react-cookie";
 import styles from "./Header.module.css";
-import { NavLink } from "react-router-dom";
-
 
 const Header = () => {
-  const [cookies, , removeCookie] = useCookies(["username", "role"]);
-  const username = cookies.username;
-  const role = cookies.role;
-  const dispatch = useDispatch();
+  const { role, username } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
     dispatch(logout());
-    removeCookie("username", { path: "/" });
-    removeCookie("role", { path: "/" });
-    navigate("/");
+    navigate("/login");
   };
-
-  useEffect(() => {
-    if (!username || !role) {
-      navigate("/"); 
-    }
-  }, [username, role, navigate]);
-
-  if (!username || !role) {
-    return null; 
-  }
 
   return (
     <header className={styles.header}>
-      <h2 className={styles.logo}>Admin Panel</h2>
-      <section className={styles.userInfo}>
-        <p>Velkommen, {username}!</p>
-      </section>
-      <section>
-      <ul>
-        <li><NavLink to="/admin/user-management">Brukeradministrasjon</NavLink></li>
-        <li><NavLink to="/admin/cv-management">CV-administrasjon</NavLink></li>
-        <button onClick={handleLogout}>Logg ut</button>
-      </ul>
-      </section>
+      <h1 className={styles.logo}>Admin Panel</h1>
+      <nav className={styles.navbar}>
+        {role === "admin" && (
+          <>
+            <button onClick={() => navigate("/adminPage/user")}>
+              Brukeradministrasjon
+            </button>
+            <button onClick={() => navigate("/adminPage/cv")}>
+              CV-administrasjon
+            </button>
+          </>
+        )}
+        {role === "user" && (
+          <>
+            <button onClick={() => navigate("/mypage/cvs")}>Mine CV-er</button>
+            <button onClick={() => navigate("/mypage/cv-management")}>
+              CV-administrasjon
+            </button>
+          </>
+        )}
+      </nav>
+      <div className={styles.userSection}>
+        <span className={styles.username}>Logget inn som: {username}</span>
+        <button onClick={handleLogout} className={styles.logoutButton}>
+          Logg ut
+        </button>
+      </div>
     </header>
   );
 };
 
 export default Header;
+

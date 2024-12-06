@@ -1,31 +1,44 @@
 .header {
+  background-color: #333;
+  color: white;
+  padding: 15px;
   display: flex;
-  flex-direction: column;
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .logo {
-    font-size: 20px;
-  }
-  
-  .userInfo {
-    font-size: 14px;
-  }
-  
-  button {
-    margin-left: 15px;
-    padding: 8px 12px;
-    background-color: #f44336;
-    border: none;
-    color: white;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #d32f2f;
-  }
-  
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logoutButton {
+  background-color: #f44336;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.logoutButton:hover {
+  background-color: #d32f2f;
+}
+
+.navList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activeLink {
+  color: #ffffff;
+  background-color: #007bff;
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+  border-radius: 4px;
+}
+
+.inactiveLink {
+  color: #000000;
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+  border-radius: 4px;
+}
+
