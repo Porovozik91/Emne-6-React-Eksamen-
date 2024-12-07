@@ -5,24 +5,28 @@ import hashPassword from "../../../utils/hashPassword";
 
 const UserCreator = () => {
   const [addUser] = useAddUserMutation();
-  const [triggerGetUsers] = useLazyGetUsersQuery(); // Lazy query for å slippe lasting forveiene
-  const [newUser, setNewUser] = useState({ username: "", password: "" });
+  const [triggerGetUsers] = useLazyGetUsersQuery();
+  const [newUser, setNewUser] = useState({ name: "", email: "", password: "" });
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
 
   const handleUserCreator = async () => {
-    if (!newUser.username || !newUser.password) {
+    if (!newUser.name || !newUser.password) {
       setMessage("Vennligst fyll inn både brukernavn og passord.");
       setIsError(true);
       return;
     }
 
     try {
-      const { data: users = [] } = await triggerGetUsers(); 
-      const userExists = users.some((user) => user.username.toLowerCase() === newUser.username.toLowerCase());
+
+      const { data } = await triggerGetUsers();
+      const users = data || [];
+      const userExists = users.some(
+        (user) => user.name.toLowerCase() === newUser.name.toLowerCase()
+      );
 
       if (userExists) {
-        setMessage(`Brukeren "${newUser.username}" finnes allerede.`);
+        setMessage(`Brukeren "${newUser.name}" finnes allerede.`);
         setIsError(true);
         return;
       }
@@ -30,14 +34,15 @@ const UserCreator = () => {
       const hashedPassword = await hashPassword(newUser.password);
 
       await addUser({
-        username: newUser.username,
+        name: newUser.name,
+        email: newUser.email,
         password: hashedPassword,
         role: "user",
       }).unwrap();
 
-      setMessage(`Bruker "${newUser.username}" er lagt til!`);
+      setMessage(`Bruker "${newUser.name}" er lagt til!`);
       setIsError(false);
-      setNewUser({ username: "", password: "" });
+      setNewUser({ name: "", email: "", password: "" });
     } catch (error) {
       console.error("Feil under opprettelse av bruker:", error);
       setMessage("Kunne ikke legge til bruker. Prøv igjen.");
@@ -51,8 +56,15 @@ const UserCreator = () => {
       <input
         type="text"
         placeholder="Brukernavn"
-        value={newUser.username}
-        onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+        value={newUser.name}
+        onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+        className={styles.input}
+      />
+      <input
+        type="email"
+        placeholder="E-post"
+        value={newUser.email}
+        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
         className={styles.input}
       />
       <input
@@ -76,9 +88,3 @@ const UserCreator = () => {
 };
 
 export default UserCreator;
-
-
-
-
-
-

@@ -4,17 +4,17 @@ import {
   useUpdateUserMutation,
   useDeleteUserMutation,
 } from "../../../services/userApi";
-import styles from "./userManager.module.css";
+import styles from "./UserManager.module.css";
 import { User } from "../../../types/user.types";
-import hashPassword from "../../../utils/hashPassword"; // Importer hashing-funksjonen
+import hashPassword from "../../../utils/hashPassword";
 
 const UserManager = () => {
   const { data: users = [], isLoading, isError } = useGetUsersQuery();
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Søkefelt
-  const [selectedUser, setSelectedUser] = useState<User | null>(null); // Valgt bruker
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const handleInputChange = (key: keyof User, value: string) => {
     if (selectedUser) {
@@ -29,11 +29,9 @@ const UserManager = () => {
   ) => {
     try {
       if (action === "update" && updatedData) {
-        // Hash passordet hvis det er oppgitt
         if (updatedData.password) {
           updatedData.password = await hashPassword(updatedData.password);
         }
-
         await updateUser({ _uuid: userId, ...updatedData }).unwrap();
       } else if (action === "delete") {
         await deleteUser(userId).unwrap();
@@ -45,9 +43,11 @@ const UserManager = () => {
     }
   };
 
-  const filteredUsers = users.filter((user: User) =>
-    user.username?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = Array.isArray(users)
+    ? users.filter((user: User) =>
+        user.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   if (isLoading) return <p>Laster brukere...</p>;
   if (isError) return <p>Kunne ikke laste brukere. Prøv igjen senere.</p>;
@@ -55,7 +55,6 @@ const UserManager = () => {
   return (
     <div className={styles.container}>
       <label htmlFor="search">Søk etter brukere</label>
-      <br />
       <input
         id="search"
         type="text"
@@ -71,7 +70,7 @@ const UserManager = () => {
             className={styles.userItem}
             onClick={() => setSelectedUser(user)}
           >
-            {user.username}
+            {user.name}
           </li>
         ))}
       </ul>
@@ -79,24 +78,34 @@ const UserManager = () => {
       {selectedUser && (
         <div className={styles.userDetails}>
           <h3>Rediger bruker</h3>
-          <input
-            type="text"
-            placeholder="Brukernavn"
-            value={selectedUser.username}
-            onChange={(e) => handleInputChange("username", e.target.value)}
-            className={styles.input}
-          />
-          <input
-            type="password"
-            placeholder="Endre passord"
-            value={selectedUser.password}
-            onChange={(e) => handleInputChange("password", e.target.value)}
-            className={styles.input}
-          />
+          <form>
+            <label>Navn</label>
+            <input
+              type="text"
+              value={selectedUser.name || ""}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              className={styles.input}
+            />
+            <label>E-post</label>
+            <input
+              type="email"
+              value={selectedUser.email || ""}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+              className={styles.input}
+            />
+            <label>Passord</label>
+            <input
+              type="password"
+              value={selectedUser.password || ""}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              className={styles.input}
+            />
+          </form>
           <button
             onClick={() =>
               handleAction("update", selectedUser._uuid, {
-                username: selectedUser.username,
+                name: selectedUser.name,
+                email: selectedUser.email,
                 password: selectedUser.password,
               })
             }

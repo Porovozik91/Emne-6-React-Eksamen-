@@ -9,7 +9,7 @@ const AdminPage = () => (
     <div className={styles.content}>
       <Sidebar />
       <main className={styles.mainContent}>
-        <Outlet /> {/* Barnrutene rendres her */}
+        <Outlet /> 
       </main>
     </div>
   </div>

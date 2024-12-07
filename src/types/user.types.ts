@@ -1,6 +1,7 @@
 export interface User {
     _uuid: string;
-    username: string;
+    name: string;
+    email: string;
     password: string;
     role: string;
   }

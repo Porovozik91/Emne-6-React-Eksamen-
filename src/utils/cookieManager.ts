@@ -1,6 +1,6 @@
 import { Cookies } from "react-cookie";
 
-// Sett cookies
+
 export const setCookie = (name: string, value: string, days: number) => {
   const cookies = new Cookies();
   const expires = new Date();
@@ -8,13 +8,13 @@ export const setCookie = (name: string, value: string, days: number) => {
   cookies.set(name, value, { path: "/", expires });
 };
 
-// Hent cookies
+
 export const getCookie = (name: string): string | null => {
   const cookies = new Cookies();
   return cookies.get(name) || null;
 };
 
-// Slett cookies
+
 export const removeCookie = (name: string) => {
   const cookies = new Cookies();
   cookies.remove(name, { path: "/" });
