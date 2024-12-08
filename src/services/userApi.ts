@@ -108,7 +108,7 @@
     
     export const {
       useGetUsersQuery,
-      useLazyGetUsersQuery, // Legger til lazy query
+      useLazyGetUsersQuery, 
       useAddUserMutation,
       useUpdateUserMutation,
       useDeleteUserMutation,

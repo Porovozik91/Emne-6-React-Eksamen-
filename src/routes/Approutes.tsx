@@ -24,7 +24,11 @@ const AppRoutes = () => {
       try {
         const decode = await jwtDecoder(jwtToken);
         if (decode.username && decode.role) {
-          dispatch(loadUserFromJwt({ username: decode.username, role: decode.role }));
+          dispatch(loadUserFromJwt({ 
+            username: decode.username, 
+            role: decode.role, 
+            _uuid: decode._uuid 
+          }));
         }
       } catch (error) {
         console.error("Feil ved dekoding av JWT:", error);

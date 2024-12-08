@@ -34,7 +34,7 @@ const SignIn = () => {
       const hashedInputPassword = await hashPassword(password);
 
     if (username === adminUsername && hashedInputPassword=== adminPassword) {
-      dispatch(login({ username, role: adminRole }));
+      dispatch(login({ username, role: adminRole, _uuid: "admin" }));
       navigate("/admin");
       setLoading(false);
       return;
@@ -46,7 +46,7 @@ const SignIn = () => {
       );
 
       if (user) {
-        dispatch(login({ username: user.name, role: user.role }));
+        dispatch(login({ username: user.name, role: user.role, _uuid: user._uuid }));
         navigate("/user/my-cv/home");
       } else {
         setError("Feil brukernavn eller passord.");

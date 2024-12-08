@@ -5,9 +5,11 @@ import { SignJWT } from "jose";
 interface UserState {
   username: string | null;
   role: string | null;
+  _uuid: string | null; 
 }
 
 const jwtSecret = new TextEncoder().encode(import.meta.env.VITE_JWT_SECRET);
+
 if (!jwtSecret) {
   throw new Error("mangler VITE_JWT_SECRET i .env");
 }
@@ -15,21 +17,29 @@ if (!jwtSecret) {
 const initialState: UserState = {
   username: null,
   role: null,
+  _uuid: null,
 };
-
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ username: string; role: string }>) => {
+    login: (state, action: PayloadAction<{ 
+      username: string; 
+      role: string; 
+      _uuid: string 
+    }>) => {
       state.username = action.payload.username;
       state.role = action.payload.role;
+      state._uuid = action.payload._uuid;
 
-      // Generer JWT og lagre i cookie
       const generateAndStoreJwt = async () => {
         try {
-          const token = await new SignJWT({ username: state.username, role: state.role })
+          const token = await new SignJWT({
+            username: state.username,
+            role: state.role,
+            _uuid: state._uuid,
+          })
             .setProtectedHeader({ alg: "HS256" })
             .setExpirationTime("1d")
             .sign(jwtSecret);
@@ -45,18 +55,20 @@ const userSlice = createSlice({
     logout: (state) => {
       state.username = null;
       state.role = null;
+      state._uuid = null;
 
-      // Fjern JWT-cookie ved utlogging
       removeCookie("authToken");
     },
     loadUserFromJwt: (state, action: PayloadAction<UserState>) => {
       state.username = action.payload.username;
       state.role = action.payload.role;
+      state._uuid = action.payload._uuid;
     },
   },
 });
 
 export const { login, logout, loadUserFromJwt } = userSlice.actions;
 export default userSlice.reducer;
+
 
 
