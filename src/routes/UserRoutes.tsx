@@ -1,12 +1,10 @@
 import { Routes, Route } from "react-router-dom";
-import MyCv from "../components/user/MyCv";
-import UserHome from "../components/user/UserHome";
-import CreateCv from "../components/user/CreateCv";
+import MyCvs from "../components/user/MyCv";
+import CreateCv from "../components/adminstration/CreateCv";
 
 const UserRoutes = () => (
   <Routes>
-    <Route path="home" element={<UserHome />} />
-    <Route path="my-cv" element={<MyCv />} />
+    <Route path="cvs-management" element={<MyCvs />} />
     <Route path="create-cv" element={<CreateCv />} />
   </Routes>
 );

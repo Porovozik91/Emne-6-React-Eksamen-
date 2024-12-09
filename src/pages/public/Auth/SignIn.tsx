@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../../../redux/userSlice"; 
 import { useLazyGetUsersQuery } from "../../../services/userApi"; 
@@ -9,7 +8,6 @@ const SignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [triggerGetUsers] = useLazyGetUsersQuery(); 
   const [loading, setLoading] = useState(false);
@@ -35,7 +33,6 @@ const SignIn = () => {
 
     if (username === adminUsername && hashedInputPassword=== adminPassword) {
       dispatch(login({ username, role: adminRole, _uuid: "admin" }));
-      navigate("/admin");
       setLoading(false);
       return;
     }
@@ -47,7 +44,6 @@ const SignIn = () => {
 
       if (user) {
         dispatch(login({ username: user.name, role: user.role, _uuid: user._uuid }));
-        navigate("/user/my-cv/home");
       } else {
         setError("Feil brukernavn eller passord.");
       }

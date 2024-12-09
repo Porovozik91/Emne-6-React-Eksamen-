@@ -7,9 +7,9 @@ const PublicRoute = () => {
 
   if (username && role) {
     return role === "admin" ? (
-      <Navigate to="/admin/user-management/overview" replace />
+      <Navigate to="/admin/users-cvs-management" replace />
     ) : (
-      <Navigate to="/user/my-cv/home" replace />
+      <Navigate to="/user/cvs-management" replace />
     );
   }
 

@@ -1,13 +1,15 @@
 import { Routes, Route } from "react-router-dom";
-import UserManagerOverview from "../components/admin/userManagement/UserManagerOverview";
 import UserManager from "../components/admin/userManagement/UserManager";
-import AddUser from "../components/admin/userManagement/UserCreator";
+import CreateUser from "../components/admin/userManagement/UserCreator";
+import CreateCv from "../components/adminstration/CreateCv";
+import MyCv from "../components/user/MyCv";
 
 const AdminRoutes = () => (
   <Routes>
-    <Route path="overview" element={<UserManagerOverview />} />
-    <Route path="all-users" element={<UserManager />} />
-    <Route path="add-user" element={<AddUser />} />
+    <Route path="users-cvs-management" element={<UserManager />} />
+    <Route path="create-user" element={<CreateUser />} />
+    <Route path="cvs-management" element={<MyCv />} />
+    <Route path="create-cv" element={<CreateCv />} />
   </Routes>
 );
 

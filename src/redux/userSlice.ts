@@ -5,7 +5,8 @@ import { SignJWT } from "jose";
 interface UserState {
   username: string | null;
   role: string | null;
-  _uuid: string | null; 
+  _uuid: string | null;
+  isAuthenticated: boolean; // Ny global state
 }
 
 const jwtSecret = new TextEncoder().encode(import.meta.env.VITE_JWT_SECRET);
@@ -18,20 +19,18 @@ const initialState: UserState = {
   username: null,
   role: null,
   _uuid: null,
+  isAuthenticated: false, // Start som ikke autentisert
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ 
-      username: string; 
-      role: string; 
-      _uuid: string 
-    }>) => {
+    login: (state, action: PayloadAction<{ username: string; role: string; _uuid: string }>) => {
       state.username = action.payload.username;
       state.role = action.payload.role;
       state._uuid = action.payload._uuid;
+      state.isAuthenticated = true; // Sett brukeren som autentisert
 
       const generateAndStoreJwt = async () => {
         try {
@@ -56,6 +55,7 @@ const userSlice = createSlice({
       state.username = null;
       state.role = null;
       state._uuid = null;
+      state.isAuthenticated = false; // Brukeren er ikke lenger autentisert
 
       removeCookie("authToken");
     },
@@ -63,12 +63,14 @@ const userSlice = createSlice({
       state.username = action.payload.username;
       state.role = action.payload.role;
       state._uuid = action.payload._uuid;
+      state.isAuthenticated = true; // Sett autentisert ved gjenoppretting
     },
   },
 });
 
 export const { login, logout, loadUserFromJwt } = userSlice.actions;
 export default userSlice.reducer;
+
 
 
 
