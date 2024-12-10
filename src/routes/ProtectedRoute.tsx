@@ -1,21 +1,21 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store"; // Importer riktig state type
+import { RootState } from "../redux/store";
 
 interface ProtectedRouteProps {
-  allowedRoles: string[]; // Tillatte roller for denne ruten
+  allowedRoles: string[]; 
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const user = useSelector((state: RootState) => state.user);  // Henter brukerinfo fra Redux
+  const { isAuthenticated, role } = useSelector((state: RootState) => state.user);
 
-  // Hvis brukeren ikke er logget inn eller ikke har riktig rolle, send dem til login-siden
-  if (!user.username || !allowedRoles.includes(user.role!)) {
-    return <Navigate to="/login" />;
+  
+  if (!isAuthenticated || !allowedRoles.includes(role || "")) {
+    return <Navigate to="/login" replace />;
   }
 
-  // Hvis brukeren har riktig rolle, vis innholdet i Outlet (barnruter)
   return <Outlet />;
 };
 
 export default ProtectedRoute;
+

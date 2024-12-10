@@ -9,28 +9,28 @@ import Skills from "./sections/Skills";
 import Educations from "./sections/Education";
 import Experiences from "./sections/Experience";
 import References from "./sections/References";
+import { validateCv, ValidationResult } from "../../../utils/createCvValidations";
+
+const initialCvState: Omit<Cv, "_uuid"> = {
+  title: "",
+  personalInfo: { name: "", email: "", phone: 0 },
+  skills: [""],
+  education: [{ institution: "", degree: "", year: 0 }],
+  experience: [{ title: "", company: "", years: 0 }],
+  references: [{ name: "", contactInfo: 0 }],
+};
 
 const CreateCv = () => {
   const userid = useSelector((state: RootState) => state.user._uuid);
   const role = useSelector((state: RootState) => state.user.role);
-  const [message, setMessage] = useState<string | null>(null);
-  const [isError, setIsError] = useState(false);
-  const [addCv] = useAddCvMutation();
-  const [triggerGetUsers, { data: users, isLoading: isUsersLoading }] = useLazyGetUsersQuery();
+  const [addCv, { isLoading: isSubmitting }] = useAddCvMutation();
+  const [triggerGetUsers, { data: users, isLoading: isUsersLoading }] =
+    useLazyGetUsersQuery();
+  const [cv, setCv] = useState<Omit<Cv, "_uuid">>(initialCvState);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-
-  const [cv, setCv] = useState<Omit<Cv, "_uuid">>({
-    title: "",
-    personalInfo: {
-      name: "",
-      email: "",
-      phone: 0,
-    },
-    skills: [""],
-    education: [{ institution: "", degree: "", year: 0 }],
-    experience: [{ title: "", company: "", years: 0 }],
-    references: [{ name: "", contactInfo: 0 }],
-  });
+  const [message, setMessage] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<ValidationResult["errors"]>({});
+  const [isError, setIsError] = useState(false);
 
   const handleFetchUsers = () => {
     if (role === "admin") {
@@ -39,42 +39,37 @@ const CreateCv = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    let userIdToUse: string;
+  const handlePersonalInfoChange = (field: keyof Cv["personalInfo"], value: string | number) => {
+    setCv((prev) => ({
+      ...prev,
+      personalInfo: { ...prev.personalInfo, [field]: value },
+    }));
+  };
 
-    if (role === "admin") {
-      if (!selectedUserId) {
-        setMessage("Vennligst velg en bruker.");
-        setIsError(true);
-        return;
-      }
-      userIdToUse = selectedUserId;
-    } else {
-      if (!userid) {
-        setMessage("Ingen bruker-ID funnet. Logg inn på nytt.");
-        setIsError(true);
-        return;
-      }
-      userIdToUse = userid;
+  const handleSubmit = async () => {
+    setValidationErrors({});
+    const validation = validateCv(cv);
+
+    if (!validation.isValid) {
+      setMessage("Validering feilet. Rett opp følgende feil:");
+      setValidationErrors(validation.errors);
+      setIsError(true);
+      return;
+    }
+
+    const userIdToUse = role === "admin" ? selectedUserId : userid;
+
+    if (!userIdToUse) {
+      setMessage("Bruker-ID mangler. Logg inn på nytt.");
+      setIsError(true);
+      return;
     }
 
     try {
-      await addCv({
-        userid: userIdToUse,
-        ...cv,
-      }).unwrap();
-
+      await addCv({ userid: userIdToUse, ...cv }).unwrap();
       setMessage("CV opprettet!");
       setIsError(false);
-
-      setCv({
-        title: "",
-        personalInfo: { name: "", email: "", phone: 0 },
-        skills: [""],
-        education: [{ institution: "", degree: "", year: 0 }],
-        experience: [{ title: "", company: "", years: 0 }],
-        references: [{ name: "", contactInfo: 0 }],
-      });
+      setCv(initialCvState);
       setSelectedUserId(null);
     } catch (error) {
       console.error("Feil ved opprettelse av CV:", error);
@@ -90,11 +85,28 @@ const CreateCv = () => {
     setCv((prev) => ({ ...prev, [section]: data }));
   };
 
+  const renderValidationSummary = () => {
+    const errorMessages = Object.values(validationErrors).filter(Boolean);
+    if (!errorMessages.length) return null;
+
+    return (
+      <div className={styles.validationSummary}>
+        <h4>Disse feltene må være utfylt:</h4>
+        <ul>
+          {errorMessages.map((error, index) => (
+            <li key={index} className={styles.error}>
+              {error}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.container}>
       <h2>Opprett CV</h2>
-
-      {role === "admin" && (
+            {role === "admin" && (
         <div className={styles.selectContainer}>
           <label>Cv eier:</label>
           <select
@@ -125,6 +137,9 @@ const CreateCv = () => {
         onChange={(e) => setCv((prev) => ({ ...prev, title: e.target.value }))}
         className={styles.input}
       />
+      {validationErrors.title && <p className={styles.error}>{validationErrors.title}</p>}
+
+      {renderValidationSummary()}
 
       <h3>Personlig informasjon</h3>
       <div className={styles.personalInfo}>
@@ -133,43 +148,36 @@ const CreateCv = () => {
           type="text"
           placeholder="Skriv inn navn"
           value={cv.personalInfo.name}
-          onChange={(e) =>
-            setCv((prev) => ({
-              ...prev,
-              personalInfo: { ...prev.personalInfo, name: e.target.value },
-            }))
-          }
+          onChange={(e) => handlePersonalInfoChange("name", e.target.value)}
           className={styles.input}
         />
+        {validationErrors.personalInfoName && (
+          <p className={styles.error}>{validationErrors.personalInfoName}</p>
+        )}
+
         <label>E-post:</label>
         <input
           type="email"
           placeholder="Skriv inn e-post"
           value={cv.personalInfo.email}
-          onChange={(e) =>
-            setCv((prev) => ({
-              ...prev,
-              personalInfo: { ...prev.personalInfo, email: e.target.value },
-            }))
-          }
+          onChange={(e) => handlePersonalInfoChange("email", e.target.value)}
           className={styles.input}
         />
+        {validationErrors.personalInfoEmail && (
+          <p className={styles.error}>{validationErrors.personalInfoEmail}</p>
+        )}
+
         <label>Telefonnummer:</label>
         <input
           type="number"
           placeholder="Skriv inn telefonnummer"
           value={cv.personalInfo.phone}
-          onChange={(e) =>
-            setCv((prev) => ({
-              ...prev,
-              personalInfo: {
-                ...prev.personalInfo,
-                phone: Number(e.target.value),
-              },
-            }))
-          }
+          onChange={(e) => handlePersonalInfoChange("phone", Number(e.target.value))}
           className={styles.input}
         />
+        {validationErrors.personalInfoPhone && (
+          <p className={styles.error}>{validationErrors.personalInfoPhone}</p>
+        )}
       </div>
 
       <Skills skills={cv.skills} onUpdate={(skills) => updateSection("skills", skills)} />
@@ -186,8 +194,8 @@ const CreateCv = () => {
         onUpdate={(references) => updateSection("references", references)}
       />
 
-      <button onClick={handleSubmit} className={styles.submitButton}>
-        Opprett CV
+      <button onClick={handleSubmit} className={styles.submitButton} disabled={isSubmitting}>
+        {isSubmitting ? "Oppretter CV..." : "Opprett CV"}
       </button>
 
       {message && (
@@ -198,3 +206,6 @@ const CreateCv = () => {
 };
 
 export default CreateCv;
+
+
+

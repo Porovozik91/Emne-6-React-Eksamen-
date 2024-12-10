@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react"; // Legg til useState for å kontrollere lasting
 import { useDispatch } from "react-redux";
 import { getCookie, removeCookie } from "../utils/cookieManager";
 import jwtDecoder from "../utils/jwtDecoder";
@@ -16,11 +16,15 @@ import NotFound from "../pages/notFound/NotFound";
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
+  const [authLoaded, setAuthLoaded] = useState(false); // Kontroll for lasting
 
   useEffect(() => {
     const initializeUser = async () => {
       const jwtToken = getCookie("authToken");
-      if (!jwtToken) return;
+      if (!jwtToken) {
+        setAuthLoaded(true); // Angi at autentiseringen er ferdig, selv uten JWT
+        return;
+      }
 
       try {
         const decoded = await jwtDecoder(jwtToken);
@@ -30,18 +34,25 @@ const AppRoutes = () => {
               username: decoded.username,
               role: decoded.role,
               _uuid: decoded._uuid,
-              isAuthenticated: true, // Sett autentisert
+              isAuthenticated: true,
             })
           );
         }
       } catch (error) {
         console.error("Feil ved dekoding av JWT:", error);
         removeCookie("authToken");
+      } finally {
+        setAuthLoaded(true); // Marker autentisering som fullført
       }
     };
 
     initializeUser();
   }, [dispatch]);
+
+  // Vent til autentisering er lastet
+  if (!authLoaded) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Routes>
