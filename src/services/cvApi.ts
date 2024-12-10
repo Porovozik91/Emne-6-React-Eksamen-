@@ -22,21 +22,56 @@ export const cvApi = createApi({
   endpoints: (builder) => ({
 
     // Opprett ny CV
-    addCv: builder.mutation<void, Partial<Cv>>({
-        query: (newCv) => ({
-          url: `/cvs`,
-          method: "POST",
-          body: [
-            {
-              ...newCv,
-            },
-          ],
-        }),
-        invalidatesTags: ["Cvs"],
+    createCv: builder.mutation<void, Partial<Cv>>({
+      query: (newCv) => ({
+        url: `/cvs`,
+        method: "POST",
+        body: [
+          {
+            ...newCv,
+          },
+        ],
+      }),
+      transformResponse: (_, meta) => {
+        console.log(`POST /cvs - Status: ${meta?.response?.status}`);
+        if (meta?.response?.status === 201) {
+          console.log("CV opprettet.");
+        } else {
+          console.error("Kunne ikke opprette CV.");
+        }
+      },
+      invalidatesTags: ["Cvs"],
+    }),
+
+    getCvs: builder.query<Cv[], void>({
+      query: () => "/cvs",
+      providesTags: ["Cvs"],
+    }),
+    
+    deleteCv: builder.mutation<void, string>({
+      query: (cvId) => ({
+        url: `/cvs/${cvId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Cvs"],
+    }),
+    updateCv: builder.mutation<void, Partial<Cv>>({
+      query: (updatedCv) => ({
+        url: `/cvs/${updatedCv._uuid}`,
+        method: "PUT",
+        body: updatedCv,
+      }),
+      invalidatesTags: ["Cvs"],
     }),
   }),
 });
 
-export const {
-  useAddCvMutation,
+export const { 
+  useCreateCvMutation,
+  useGetCvsQuery, 
+  useLazyGetCvsQuery, 
+  useDeleteCvMutation, 
+  useUpdateCvMutation 
 } = cvApi;
+  
+

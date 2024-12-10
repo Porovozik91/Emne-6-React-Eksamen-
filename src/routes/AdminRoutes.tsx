@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import UserManager from "../components/admin/userManagement/UserManager";
 import CreateUser from "../components/admin/userManagement/UserCreator";
 import CreateCv from "../components/adminstration/cv/CreateCv";
-import MyCv from "../components/user/MyCv";
+import MyCv from "../components/adminstration/cv/AllCvs";
 
 const AdminRoutes = () => (
   <Routes>

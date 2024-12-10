@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useAddCvMutation } from "../../../services/cvApi";
+import { useCreateCvMutation } from "../../../services/cvApi";
 import { useLazyGetUsersQuery } from "../../../services/userApi";
 import { RootState } from "../../../redux/store";
 import { Cv } from "../../../types/cv.types";
@@ -23,7 +23,7 @@ const initialCvState: Omit<Cv, "_uuid"> = {
 const CreateCv = () => {
   const userid = useSelector((state: RootState) => state.user._uuid);
   const role = useSelector((state: RootState) => state.user.role);
-  const [addCv, { isLoading: isSubmitting }] = useAddCvMutation();
+  const [createCv, { isLoading: isSubmitting }] = useCreateCvMutation();
   const [triggerGetUsers, { data: users, isLoading: isUsersLoading }] =
     useLazyGetUsersQuery();
   const [cv, setCv] = useState<Omit<Cv, "_uuid">>(initialCvState);
@@ -66,7 +66,7 @@ const CreateCv = () => {
     }
 
     try {
-      await addCv({ userid: userIdToUse, ...cv }).unwrap();
+      await createCv({ userid: userIdToUse, ...cv }).unwrap();
       setMessage("CV opprettet!");
       setIsError(false);
       setCv(initialCvState);
