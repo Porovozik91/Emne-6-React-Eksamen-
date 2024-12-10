@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import MyCvs from "../components/user/MyCv";
-import CreateCv from "../components/adminstration/CreateCv";
+import CreateCv from "../components/adminstration/cv/CreateCv";
 
 const UserRoutes = () => (
   <Routes>

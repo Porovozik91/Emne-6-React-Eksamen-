@@ -1,12 +1,11 @@
-import React from "react";
-import styles from "../CreateCv.module.css";
+import styles from "../createCv.module.css";
 
-interface SkillsSectionProps {
+interface SkillsProps {
   skills: string[];
   onUpdate: (skills: string[]) => void;
 }
 
-const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, onUpdate }) => {
+function Skills({ skills, onUpdate }: SkillsProps) {
   const handleChange = (index: number, value: string) => {
     const updatedSkills = [...skills];
     updatedSkills[index] = value;
@@ -38,6 +37,6 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, onUpdate }) => {
       </button>
     </div>
   );
-};
+}
 
-export default SkillsSection;
+export default Skills;
