@@ -21,29 +21,32 @@ export const cvApi = createApi({
   tagTypes: ["Cvs"],
   endpoints: (builder) => ({
 
-   
+   //post
     createCv: builder.mutation<void, Partial<Cv>>({
       query: (newCv) => ({
         url: `/cvs`,
         method: "POST",
-        body: [
-          {
-            ...newCv,
-          },
-        ],
+        body: [{
+          ...newCv,
+        }],
       }),
       transformResponse: (_, meta) => {
-        console.log(`POST /cvs - Status: ${meta?.response?.status}`);
-        if (meta?.response?.status === 201) {
-          console.log("CV opprettet.");
+        const status = meta?.response?.status;
+        console.log(`POST /cvs - Status: ${status}`);
+    
+        if (status === 201) {
+          console.log(`Status: ${status} Created - CV opprettet.`);
+        } else if (status === 400) {
+          console.error(`Status: ${status} - Bad Request.`);
         } else {
           console.error("Kunne ikke opprette CV.");
         }
       },
       invalidatesTags: ["Cvs"],
     }),
+    
 
-   
+    // Hent alle CV-er (for admin)
     getAllCvs: builder.query<Cv[], void>({
       query: () => `/cvs`,
       transformResponse: (response: { items: Cv[] }, meta) => {
@@ -55,7 +58,7 @@ export const cvApi = createApi({
         if (status === 200) {
           console.log(`Status: ${status} OK - CV-er hentet.`);
         } else if (status === 403) {
-          console.error(`Status: ${status} Forbidden - Tilgang nektet.`);
+          console.error(`Status: ${status} Forbidden.`);
         } else {
           console.error(`Uventet status: ${status}`);
         }
@@ -64,6 +67,29 @@ export const cvApi = createApi({
       },
       providesTags: ["Cvs"],
     }),
+
+    // Hent CV-er for en spesifikk bruker
+    getUserCvs: builder.query<Cv[], string>({
+      query: (userId) => `/users/${userId}/cvs`,
+      transformResponse: (response: { items: Cv[] }, meta) => {
+        const status = meta?.response?.status;
+        const userResponse = response.items.map((cv) => ({
+          userId: cv.userid,
+        }));
+        if (status === 200) {
+          console.log(`Status: ${status} OK - CV-er for bruker ${userResponse} hentet.`);
+        } else if (status === 403) {
+          console.error(`Status: ${status} Forbidden.`);
+        } else {
+          console.error(`Uventet status: ${status}`);
+        }
+        console.log(`GET /users/${userResponse}/cvs - Respons:`, response.items);
+        return response.items;
+      },
+      providesTags: ["Cvs"],
+    }),
+
+   
     })
   })
 
@@ -71,6 +97,8 @@ export const {
   useCreateCvMutation,
   useGetAllCvsQuery,
   useLazyGetAllCvsQuery,
+  useGetUserCvsQuery,
+  useLazyGetUserCvsQuery,
 } = cvApi;
   
 

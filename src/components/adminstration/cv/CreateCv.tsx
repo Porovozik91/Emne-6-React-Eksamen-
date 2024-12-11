@@ -42,7 +42,7 @@ const CreateCv = () => {
   const handlePersonalInfoChange = (field: keyof Cv["personalInfo"], value: string | number) => {
     setCv((prev) => ({
       ...prev,
-      personalInfo: { ...prev.personalInfo, [field]: value },
+      personalInfo: { ...prev.personalInfo, [field]: field === "phone" ? Number(value) : value },
     }));
   };
 
@@ -106,9 +106,9 @@ const CreateCv = () => {
   return (
     <div className={styles.container}>
       <h2>Opprett CV</h2>
-            {role === "admin" && (
+      {role === "admin" && (
         <div className={styles.selectContainer}>
-          <label>Cv eier:</label>
+          <label>CV eier:</label>
           <select
             onClick={handleFetchUsers}
             onChange={(e) => setSelectedUserId(e.target.value)}
@@ -206,6 +206,7 @@ const CreateCv = () => {
 };
 
 export default CreateCv;
+
 
 
 
