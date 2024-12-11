@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useCreateCvMutation } from "../../../services/cvApi";
+import { useCreateCvMutation } from "../cvApi";
 import { useLazyGetUsersQuery } from "../../../services/userApi";
 import { RootState } from "../../../redux/store";
 import { Cv } from "../../../types/cv.types";

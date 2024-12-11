@@ -1,17 +1,13 @@
 import { Page, Text, View, Document } from "@react-pdf/renderer";
-import { Cv } from "../../../types/cv.types";
+import { DocumentPdf } from "../../../types/cv.types";
 import PdfStyling from "./pdfStyling"; // Importér fra den eksterne filen
 
-interface PdfDocumentProps {
-  cv: Cv;
-  selectedSections: string[];
-}
 
-const PdfDocument = ({ cv, selectedSections }: PdfDocumentProps) => {
+
+const PdfDocument = ({ cv, selectedSections }: DocumentPdf) => {
   return (
     <Document>
       <Page size="A4" style={PdfStyling.page}>
-        {/* CV Title */}
         <Text style={PdfStyling.title}>{cv.title}</Text>
 
         {/* Personal Info Section */}

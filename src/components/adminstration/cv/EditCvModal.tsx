@@ -4,15 +4,9 @@ import Skills from "./sections/Skills";
 import Educations from "./sections/Education";
 import Experiences from "./sections/Experience";
 import References from "./sections/References";
-import { Cv } from "../../../types/cv.types";
+import { Cv, CvModalEdit, } from "../../../types/cv.types";
 
-interface EditCvModalProps {
-  cv: Cv;
-  onClose: () => void;
-  onUpdate: (cv: Cv) => void;
-}
-
-const EditCvModal = ({ cv, onClose, onUpdate }: EditCvModalProps) => {
+const EditCvModal = ({ cv, onClose, onUpdate }: CvModalEdit) => {
   const [editedCv, setEditedCv] = useState<Cv>(cv);
 
   const updateSection = <K extends keyof Omit<Cv, "_uuid">>(

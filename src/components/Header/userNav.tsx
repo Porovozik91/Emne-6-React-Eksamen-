@@ -13,17 +13,7 @@ const UserNavigation = () => {
               isActive ? styles.activeLink : styles.inactiveLink
             }
           >
-            Mine CV-er
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/user/create-cv"
-            className={({ isActive }) =>
-              isActive ? styles.activeLink : styles.inactiveLink
-            }
-          >
-            Opprett CV
+          Administrer mine CV-er
           </NavLink>
         </li>
       </ul>

@@ -42,41 +42,40 @@ const AppRoutes = () => {
         console.error("Feil ved dekoding av JWT:", error);
         removeCookie("authToken");
       } finally {
-        setAuthLoaded(true); // Marker autentisering som fullført
+        setAuthLoaded(true); 
       }
     };
 
     initializeUser();
   }, [dispatch]);
 
-  // Vent til autentisering er lastet
+  
   if (!authLoaded) {
     return <div>Loading...</div>;
   }
 
   return (
     <Routes>
-      {/* Offentlige ruter */}
       <Route element={<PublicRoute />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<SignIn />} />
       </Route>
 
-      {/* Beskyttede ruter for admin */}
+     
       <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
         <Route path="/admin" element={<AdminPage />}>
           <Route path="*" element={<AdminRoutes />} />
         </Route>
       </Route>
 
-      {/* Beskyttede ruter for bruker */}
+    
       <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
         <Route path="/user" element={<UserPage />}>
           <Route path="*" element={<UserRoutes />} />
         </Route>
       </Route>
 
-      {/* Ikke funnet-side */}
+      
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

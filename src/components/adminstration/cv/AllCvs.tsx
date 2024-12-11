@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import {
   useLazyGetAllCvsQuery,
   useUpdateCvMutation,
   useDeleteCvMutation,
-} from "../../../services/cvApi";
+} from "../cvApi";
 import { useLazyGetUsersQuery } from "../../../services/userApi";
 import CvList from "./CvList";
 import EditCvModal from "./EditCvModal";
-import PdfExportModal from "./PdfExportModal";
+import PdfManager from "./PdfManager";
 import styles from "./AllCvs.module.css";
 import { Cv } from "../../../types/cv.types";
 import { User } from "../../../types/user.types";
+import { CreateCvModal } from "../ManagerModal";
 
 const AllCvs = () => {
   const role = useSelector((state: RootState) => state.user.role);
@@ -24,56 +25,81 @@ const AllCvs = () => {
   const [selectedCv, setSelectedCv] = useState<Cv | null>(null);
   const [pdfCv, setPdfCv] = useState<Cv | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isCreateCvModalOpen, setIsCreateCvModalOpen] = useState<boolean>(false);
 
-  // Hent CV-er og brukere ved første render
-  if (!allCvs.length && !isLoading) {
-    triggerGetAllCvs();
-    triggerGetUsers(); // Henter brukere
-  }
+  
+  useEffect(() => {
+    if (!allCvs.length && !isLoading) {
+      triggerGetAllCvs(); 
+      triggerGetUsers(); 
+    }
+  }, [allCvs.length, isLoading, triggerGetAllCvs, triggerGetUsers]);
 
-  // Filtrerer CV-er basert på rolle og søkeord
+  
   const filteredCvs = allCvs.filter((cv) => {
     const searchMatches =
       cv.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cv.personalInfo.name.toLowerCase().includes(searchTerm.toLowerCase());
-
+  
+    const ownerNameMatches = role === "admin" && users.some((user) => {
+      return user._uuid === cv.userid && user.name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  
     return role === "admin"
-      ? searchMatches
+      ? searchMatches || ownerNameMatches
       : cv.userid === userid && searchMatches;
   });
 
-  // Oppdaterer søkefeltet
+ 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    triggerGetAllCvs();
   };
 
-  // Finner brukernavn basert på `userid`
+ 
   const getUserNameById = (userId: string) => {
     const user = users.find((user: User) => user._uuid === userId);
     return user?.name || "Ukjent bruker";
   };
 
-  // Håndterer sletting av en CV
+ 
   const handleDelete = async (cvId: string) => {
     try {
       await deleteCv(cvId).unwrap();
-      alert("CV slettet!");
     } catch (error) {
       console.error("Kunne ikke slette CV:", error);
       alert("Kunne ikke slette CV. Prøv igjen.");
     }
   };
 
+  const handleOpenCreateCvModal = () => {
+    setIsCreateCvModalOpen(true);
+  };
+
+  const handleCloseCreateCvModal = () => {
+    setIsCreateCvModalOpen(false);
+  };
+
   return (
-    <div className={styles.container}>
+    <section className={styles.container}>
       <h2>Alle CV-er</h2>
+      <div>
+      {isCreateCvModalOpen && (
+        <CreateCvModal onClose={handleCloseCreateCvModal} />
+      )}
+     <button 
+     onClick={handleOpenCreateCvModal}
+     className={styles.createButton}
+     >
+       Opprett Cv
+       </button>           
+     </div>
+      <label>Søk:</label>
       <input
         type="text"
         placeholder={
           role === "admin"
-            ? "Søk etter navn eller CV-tittel"
-            : "Søk etter CV-tittel"
+            ? "Brukernavn eller CV-tittel"
+            : "CV-tittel"
         }
         value={searchTerm}
         onChange={handleSearchChange}
@@ -83,7 +109,7 @@ const AllCvs = () => {
       <CvList
         cvs={filteredCvs}
         role={role}
-        getUserNameById={getUserNameById} // Sender funksjonen til CvList
+        getUserNameById={getUserNameById}
         onEdit={setSelectedCv}
         onDelete={handleDelete}
         onExport={setPdfCv}
@@ -94,15 +120,15 @@ const AllCvs = () => {
           onClose={() => setSelectedCv(null)}
           onUpdate={async (updatedCv) => {
             await updateCv(updatedCv).unwrap();
-            alert("CV oppdatert!");
             setSelectedCv(null);
           }}
         />
       )}
-      {pdfCv && <PdfExportModal cv={pdfCv} onClose={() => setPdfCv(null)} />}
-    </div>
+      {pdfCv && <PdfManager cv={pdfCv} onClose={() => setPdfCv(null)} />}
+    </section>
   );
 };
 
 export default AllCvs;
+
 

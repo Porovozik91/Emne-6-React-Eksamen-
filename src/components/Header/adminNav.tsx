@@ -18,33 +18,13 @@ const AdminNavigation = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink
-                to="/admin/create-user"
-                className={({ isActive }) =>
-                  isActive ? styles.activeLink : styles.inactiveLink
-                }
-              >
-                Opprett brukere
-              </NavLink>
-            </li>
-            <li>
           <NavLink
             to="/admin/cvs-management"
             className={({ isActive }) =>
               isActive ? styles.activeLink : styles.inactiveLink
             }
           >
-            Alle CV-er
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/admin/create-cv"
-            className={({ isActive }) =>
-              isActive ? styles.activeLink : styles.inactiveLink
-            }
-          >
-            Opprett CV
+           Administrer Cv-er
           </NavLink>
         </li>
           </>

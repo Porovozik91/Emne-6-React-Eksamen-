@@ -1,0 +1,56 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .submitButton {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .submitButton:hover {
+    background-color: #45a049;
+  }
+  
+  .validationSummary {
+    margin-bottom: 20px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    padding: 10px;
+    border-radius: 4px;
+    color: #842029;
+  }
+  
+  .error {
+    margin-bottom: 5px;
+  }
+  
+  .errorMessage {
+    color: red;
+    font-size: 1em;
+    margin-top: 10px;
+  }
+  
+  .successMessage {
+    color: green;
+    font-size: 1em;
+    margin-top: 10px;
+  }
+  

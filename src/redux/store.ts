@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { userApi } from "../services/userApi";
-import { cvApi } from "../services/cvApi";
+import { cvApi } from "../components/adminstration/cvApi";
 import userReducer from "./userSlice";
 
 export const store = configureStore({

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Cv } from "../types/cv.types";
+import { Cv } from "../../types/cv.types";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY_SPEAKER;
@@ -26,9 +26,11 @@ export const cvApi = createApi({
       query: (newCv) => ({
         url: `/cvs`,
         method: "POST",
-        body: [{
+        body: [
+          {
           ...newCv,
-        }],
+          }
+      ],
       }),
       transformResponse: (_, meta) => {
         const status = meta?.response?.status;

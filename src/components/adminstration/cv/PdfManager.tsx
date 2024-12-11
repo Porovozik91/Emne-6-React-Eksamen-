@@ -1,17 +1,11 @@
 import { useState } from "react";
 import { PDFViewer, BlobProvider } from "@react-pdf/renderer";
-import PdfDocument from "./PdfDocument";
-import styles from "./PdfExportModal.module.css";
-import { Cv } from "../../../types/cv.types";
+import PdfDocumentView from "./PdfDocumentView";
+import styles from "./pdfManager.module.css";
+import { Pdf, Section } from "../../../types/cv.types";
 
-type Section = "personalInfo" | "skills" | "education" | "experience" | "references";
 
-interface PdfExportModalProps {
-  cv: Cv;
-  onClose: () => void;
-}
-
-const PdfExportModal: React.FC<PdfExportModalProps> = ({ cv, onClose }) => {
+const PdfManager = ({ cv, onClose }: Pdf) => {
   const [selectedSections, setSelectedSections] = useState<Section[]>([
     "personalInfo",
     "skills",
@@ -19,7 +13,6 @@ const PdfExportModal: React.FC<PdfExportModalProps> = ({ cv, onClose }) => {
     "experience",
     "references",
   ]);
-
   const sectionLabels: Record<Section, string> = {
     personalInfo: "Personlig informasjon",
     skills: "Ferdigheter",
@@ -55,13 +48,13 @@ const PdfExportModal: React.FC<PdfExportModalProps> = ({ cv, onClose }) => {
 
         <div className={styles.pdfViewerContainer}>
           <PDFViewer style={{ width: "100%", height: "100%" }}>
-            <PdfDocument cv={cv} selectedSections={selectedSections} />
+            <PdfDocumentView cv={cv} selectedSections={selectedSections} />
           </PDFViewer>
         </div>
 
         <div className={styles.buttonContainer}>
           <BlobProvider
-            document={<PdfDocument cv={cv} selectedSections={selectedSections} />}
+            document={<PdfDocumentView cv={cv} selectedSections={selectedSections} />}
           >
             {({ url, loading }) => (
               <a
@@ -83,7 +76,7 @@ const PdfExportModal: React.FC<PdfExportModalProps> = ({ cv, onClose }) => {
   );
 };
 
-export default PdfExportModal;
+export default PdfManager;
 
 
 

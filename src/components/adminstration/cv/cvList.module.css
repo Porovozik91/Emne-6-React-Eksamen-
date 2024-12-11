@@ -1,0 +1,48 @@
+.cvItem {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    cursor: pointer; /* Endrer musen til "pointer" */
+    transition: background-color 0.3s;
+  }
+  
+  .cvItem:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .selected {
+    background-color: #e6f7ff;
+    border-color: #1890ff;
+  }
+  
+  .actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .editButton,
+  .exportButton,
+  .deleteButton {
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .editButton {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+  }
+  
+  .exportButton {
+    background-color: #008cba;
+    color: white;
+    border: none;
+  }
+  
+  .deleteButton {
+    background-color: #f44336;
+    color: white;
+    border: none;
+  }
+  

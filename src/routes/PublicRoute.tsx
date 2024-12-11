@@ -6,7 +6,6 @@ const PublicRoute = () => {
   const { isAuthenticated, role } = useSelector((state: RootState) => state.user);
   const location = useLocation();
 
-  // Hvis brukeren er pålogget og prøver å navigere til /login, omdiriger dem basert på rolle
   if (isAuthenticated && location.pathname === "/login") {
     return role === "admin" ? (
       <Navigate to="/admin/users-cvs-management" replace />
@@ -15,7 +14,6 @@ const PublicRoute = () => {
     );
   }
 
-  // Ellers tillat tilgang til offentlige ruter
   return <Outlet />;
 };
 

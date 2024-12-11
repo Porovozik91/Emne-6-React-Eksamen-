@@ -4,130 +4,236 @@ import {
   useUpdateUserMutation,
   useDeleteUserMutation,
 } from "../../../services/userApi";
-import styles from "./UserManager.module.css";
+import styles from "./userManager.module.css";
 import { User } from "../../../types/user.types";
 import hashPassword from "../../../utils/hashPassword";
+import { validateUser } from "../../../utils/validateUser";
+import { UserCreatorModal } from "../ManagerModal";
+import { existingUsersCheck } from "../../../utils/exsistingUsersCheck";
 
 const UserManager = () => {
   const { data: users = [], isLoading, isError } = useGetUsersQuery();
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [message, setMessage] = useState<string | null>(null);
+  const [isUserCreatorModalOpen, setIsUserCreatorModalOpen] = useState<boolean>(false);
+
 
   const handleInputChange = (key: keyof User, value: string) => {
-    if (selectedUser) {
-      setSelectedUser({ ...selectedUser, [key]: value });
-    }
+    if (selectedUser) setSelectedUser({ ...selectedUser, [key]: value });
   };
 
-  const handleAction = async (
-    action: "update" | "delete",
-    userId: string,
-    updatedData?: Partial<User>
-  ) => {
-    try {
-      if (action === "update" && updatedData) {
-        if (updatedData.password) {
-          updatedData.password = await hashPassword(updatedData.password);
-        }
-        await updateUser({ _uuid: userId, ...updatedData }).unwrap();
-      } else if (action === "delete") {
-        await deleteUser(userId).unwrap();
+  const handleUpdate = async () => {
+    if (!selectedUser) return;
+
+    const validationResult = validateUser(selectedUser);
+  const { exists, fields } = existingUsersCheck(
+    users.filter((user) => user._uuid !== selectedUser._uuid),
+    selectedUser.name,
+    selectedUser.email
+  );
+
+  if (exists) {
+    validationResult.isValid = false;
+    validationResult.errors.existingUser = `Brukeren med ${fields.join(
+      " og "
+    )} finnes allerede.`;
+  }
+
+  if (!validationResult.isValid) {
+    setValidationErrors(validationResult.errors);
+    setMessage("Validering feilet. Rett opp feltene nedenfor.");
+    return;
+  }
+
+    const { _uuid, ...updatedData } = selectedUser;
+    if (updatedData.password) {
+      try {
+        updatedData.password = await hashPassword(updatedData.password);
+      } catch {
+        alert("Kunne ikke kryptere passord. Prøv igjen.");
+        return;
       }
-      setSelectedUser(null);
-    } catch (error) {
-      console.error(`Feil under ${action}:`, error);
-      alert(`Kunne ikke ${action === "update" ? "oppdatere" : "slette"} brukeren. Prøv igjen.`);
+    }
+
+    try {
+      await updateUser({ _uuid, ...updatedData }).unwrap();
+      setIsEditModalOpen(false);
+      setMessage("Bruker oppdatert!");
+      setValidationErrors({});
+    } catch {
+      alert("Kunne ikke oppdatere brukeren. Prøv igjen.");
     }
   };
 
-  const filteredUsers = Array.isArray(users)
-    ? users.filter((user: User) =>
-        user.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+  const handleDelete = async (userId: string) => {
+    try {
+      await deleteUser(userId).unwrap();
+      setSelectedUser(null);
+      setMessage("Bruker slettet!");
+    } catch {
+      alert("Kunne ikke slette brukeren. Prøv igjen.");
+    }
+  };
+
+  const filteredUsers = users.filter((user: User) =>
+    user.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const renderValidationSummary = () => {
+    const errorMessages = Object.values(validationErrors).filter(Boolean);
+    if (!errorMessages.length) return null;
+
+    return (
+      <div className={styles.validationSummary}>
+        <h4>Utfyll eller korriger:</h4>
+        <ul>
+          {errorMessages.map((error, index) => (
+            <li key={index} className={styles.error}>
+              {error}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
+  const handleOpenUserCreatorModal = () => {
+    setIsUserCreatorModalOpen(true);
+  };
+
+  const handleCloseUserCreatorModal = () => {
+    setIsUserCreatorModalOpen(false);
+  };
+
+
+  const renderInput = (label: string, type: string, value: string, key: keyof User) => (
+    <>
+      <label>{label}</label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => handleInputChange(key, e.target.value)}
+        className={styles.input}
+      />
+    </>
+  );
 
   if (isLoading) return <p>Laster brukere...</p>;
   if (isError) return <p>Kunne ikke laste brukere. Prøv igjen senere.</p>;
 
   return (
-    <div className={styles.container}>
-      <label htmlFor="search">Søk etter brukere</label>
-      <input
-        id="search"
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className={styles.searchInput}
-      />
-      <h2>Alle brukere</h2>
+    <section className={styles.container}>
+      <header>
+        <h2>Brukeradministrasjon</h2>
+        <h3>Alle Brukere</h3>
+      </header>
+      {message && <p className={styles.message}>{message}</p>}
+      <div>
+      {isUserCreatorModalOpen && (
+        <UserCreatorModal onClose={handleCloseUserCreatorModal} />
+      )}
+     <button 
+     onClick={handleOpenUserCreatorModal}
+     className={styles.createButton}
+     >
+       Opprett Cv
+       </button>           
+     </div>
+      <form>
+        <label htmlFor="search">Søk etter brukere</label>
+        <input
+          id="search"
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className={styles.searchInput}
+          placeholder="Skriv inn brukernavn"
+        />
+      </form>
+
       <ul className={styles.userList}>
         {filteredUsers.map((user) => (
           <li
             key={user._uuid}
-            className={styles.userItem}
-            onClick={() => setSelectedUser(user)}
+            className={`${styles.userItem} ${
+              selectedUser?._uuid === user._uuid ? styles.selectedUser : ""
+            }`}
+            onClick={() =>
+              setSelectedUser(user._uuid === selectedUser?._uuid ? null : user)
+            }
           >
-            {user.name}
+            <p>{user.name}</p>
+            <p>{user.email}</p>
+            {selectedUser?._uuid === user._uuid && (
+              <div className={styles.actions}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditModalOpen(true);
+                  }}
+                  className={styles.editButton}
+                >
+                  Rediger
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(user._uuid);
+                  }}
+                  disabled={isDeleting}
+                  className={styles.deleteButton}
+                >
+                  {isDeleting ? "Sletter..." : "Slett"}
+                </button>
+              </div>
+            )}
           </li>
         ))}
       </ul>
 
-      {selectedUser && (
-        <div className={styles.userDetails}>
-          <h3>Rediger bruker</h3>
-          <form>
-            <label>Navn</label>
-            <input
-              type="text"
-              value={selectedUser.name || ""}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              className={styles.input}
-            />
-            <label>E-post</label>
-            <input
-              type="email"
-              value={selectedUser.email || ""}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-              className={styles.input}
-            />
-            <label>Passord</label>
-            <input
-              type="password"
-              value={selectedUser.password || ""}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              className={styles.input}
-            />
-          </form>
-          <button
-            onClick={() =>
-              handleAction("update", selectedUser._uuid, {
-                name: selectedUser.name,
-                email: selectedUser.email,
-                password: selectedUser.password,
-              })
-            }
-            disabled={isUpdating}
-            className={styles.updateButton}
-          >
-            {isUpdating ? "Oppdaterer..." : "Oppdater"}
-          </button>
-          <button
-            onClick={() => handleAction("delete", selectedUser._uuid)}
-            disabled={isDeleting}
-            className={styles.deleteButton}
-          >
-            {isDeleting ? "Sletter..." : "Slett"}
-          </button>
+      {isEditModalOpen && selectedUser && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h3>Rediger bruker</h3>
+            {renderValidationSummary()}
+            {renderInput("Navn", "text", selectedUser.name || "", "name")}
+            {renderInput("E-post", "email", selectedUser.email || "", "email")}
+            {renderInput("Passord", "password", selectedUser.password || "", "password")}
+      
+            <div className={styles.modalActions}>
+              <button
+                onClick={handleUpdate}
+                disabled={isUpdating}
+                className={styles.saveButton}
+              >
+                {isUpdating ? "Lagrer..." : "Lagre"}
+              </button>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className={styles.cancelButton}
+              >
+                Avbryt
+              </button>
+            </div>
+          </div>
         </div>
       )}
-    </div>
+    </section>
   );
 };
 
 export default UserManager;
+
+
+
+
+
 
 
 
