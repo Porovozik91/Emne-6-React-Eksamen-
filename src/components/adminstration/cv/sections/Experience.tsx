@@ -3,7 +3,7 @@ import styles from "../createCv.module.css";
 import { Cv } from "../../../../types/cv.types";
 
 interface ExperienceProps {
-  experience: Cv["experience"]; // Bruker Cv-typen direkte
+  experience: Cv["experience"];
   onUpdate: (experience: Cv["experience"]) => void;
 }
 
@@ -12,18 +12,24 @@ function Experience({ experience, onUpdate }: ExperienceProps) {
   const [newExperience, setNewExperience] = useState<Cv["experience"][number]>({
     title: "",
     company: "",
-    years: 0,
+    startYear: 0,
+    endYear: 0,
   });
 
   const handleAddClick = () => setIsAdding(true);
 
   const handleCancelClick = () => {
     setIsAdding(false);
-    setNewExperience({ title: "", company: "", years: 0 });
+    setNewExperience({ title: "", company: "", startYear: 0, endYear: 0 });
   };
 
   const handleSave = () => {
-    if (newExperience.title.trim() && newExperience.company.trim()) {
+    if (
+      newExperience.title.trim() &&
+      newExperience.company.trim() &&
+      newExperience.startYear > 0 &&
+      newExperience.endYear >= newExperience.startYear
+    ) {
       onUpdate([...experience, newExperience]);
     }
     handleCancelClick();
@@ -33,7 +39,10 @@ function Experience({ experience, onUpdate }: ExperienceProps) {
     onUpdate(experience.filter((_, i) => i !== index));
   };
 
-  const handleChange = (field: keyof Cv["experience"][number], value: string | number) => {
+  const handleChange = (
+    field: keyof Cv["experience"][number],
+    value: string | number
+  ) => {
     setNewExperience((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -46,9 +55,14 @@ function Experience({ experience, onUpdate }: ExperienceProps) {
           <p>{exp.title}</p>
           <label>Firma:</label>
           <p>{exp.company}</p>
-          <label>År:</label>
-          <p>{exp.years}</p>
-          <button onClick={() => handleRemove(index)} className={styles.removeButton}>
+          <label>Fra år:</label>
+          <p>{exp.startYear}</p>
+          <label>Til år:</label>
+          <p>{exp.endYear}</p>
+          <button
+            onClick={() => handleRemove(index)}
+            className={styles.removeButton}
+          >
             Fjern
           </button>
         </div>
@@ -71,9 +85,16 @@ function Experience({ experience, onUpdate }: ExperienceProps) {
           />
           <input
             type="number"
-            placeholder="Skriv inn år"
-            value={newExperience.years}
-            onChange={(e) => handleChange("years", Number(e.target.value))}
+            placeholder="Fra år"
+            value={newExperience.startYear}
+            onChange={(e) => handleChange("startYear", Number(e.target.value))}
+            className={styles.input}
+          />
+          <input
+            type="number"
+            placeholder="Til år"
+            value={newExperience.endYear}
+            onChange={(e) => handleChange("endYear", Number(e.target.value))}
             className={styles.input}
           />
           <button onClick={handleSave} className={styles.saveButton}>
@@ -93,4 +114,5 @@ function Experience({ experience, onUpdate }: ExperienceProps) {
 }
 
 export default Experience;
+
 

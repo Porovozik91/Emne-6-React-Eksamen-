@@ -5,7 +5,7 @@ import {
   useLazyGetAllCvsQuery,
   useUpdateCvMutation,
   useDeleteCvMutation,
-} from "../cvApi";
+} from "../../../services/cvApi";
 import { useLazyGetUsersQuery } from "../../../services/userApi";
 import CvList from "./CvList";
 import EditCvModal from "./EditCvModal";
@@ -81,7 +81,7 @@ const AllCvs = () => {
 
   return (
     <section className={styles.container}>
-      <h2>Alle CV-er</h2>
+      <h2>Cv-administrasjon</h2>
       <div>
       {isCreateCvModalOpen && (
         <CreateCvModal onClose={handleCloseCreateCvModal} />

@@ -131,7 +131,6 @@ const UserManager = () => {
     <section className={styles.container}>
       <header>
         <h2>Brukeradministrasjon</h2>
-        <h3>Alle Brukere</h3>
       </header>
       {message && <p className={styles.message}>{message}</p>}
       <div>
@@ -142,7 +141,7 @@ const UserManager = () => {
      onClick={handleOpenUserCreatorModal}
      className={styles.createButton}
      >
-       Opprett Cv
+       Opprett bruker
        </button>           
      </div>
       <form>

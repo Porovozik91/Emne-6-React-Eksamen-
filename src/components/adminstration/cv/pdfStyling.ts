@@ -4,25 +4,39 @@ const PdfStyling = StyleSheet.create({
   page: {
     padding: 30,
     fontFamily: "Helvetica",
-    fontSize: 12,
-    lineHeight: 1.5,
   },
-  title: {
-    fontSize: 20,
+  mainTitle: {
+    fontSize: 24,
     marginBottom: 20,
-    textAlign: "center", 
-    color: "#333",
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "#000",
   },
   section: {
-    marginBottom: 15,
+    marginBottom: 20,
     paddingBottom: 10,
-    borderBottom: "1px solid #ccc",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    borderBottomStyle: "solid",
+  },
+  sectionTitle: {
+    fontSize: 16,
+    marginBottom: 10,
+    fontWeight: "bold",
+    textDecoration: "underline",
+    color: "#333",
+  },
+  item: {
+    marginBottom: 10,
   },
   text: {
-    marginBottom: 5,
+    fontSize: 12,
+    lineHeight: 1.5,
+    color: "#555",
   },
 });
 
 export default PdfStyling;
+
 
   

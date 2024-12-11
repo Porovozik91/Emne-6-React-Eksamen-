@@ -3,7 +3,7 @@ import styles from "../createCv.module.css";
 import { Cv } from "../../../../types/cv.types";
 
 interface EducationProps {
-  education: Cv["education"]; // Bruker Cv-typen direkte
+  education: Cv["education"];
   onUpdate: (education: Cv["education"]) => void;
 }
 
@@ -12,18 +12,24 @@ function Education({ education, onUpdate }: EducationProps) {
   const [newEducation, setNewEducation] = useState<Cv["education"][number]>({
     institution: "",
     degree: "",
-    year: 0,
+    startYear: 0,
+    endYear: 0,
   });
 
   const handleAddClick = () => setIsAdding(true);
 
   const handleCancelClick = () => {
     setIsAdding(false);
-    setNewEducation({ institution: "", degree: "", year: 0 });
+    setNewEducation({ institution: "", degree: "", startYear: 0, endYear: 0 });
   };
 
   const handleSave = () => {
-    if (newEducation.institution.trim() && newEducation.degree.trim()) {
+    if (
+      newEducation.institution.trim() &&
+      newEducation.degree.trim() &&
+      newEducation.startYear > 0 &&
+      newEducation.endYear >= newEducation.startYear
+    ) {
       onUpdate([...education, newEducation]);
     }
     handleCancelClick();
@@ -33,7 +39,10 @@ function Education({ education, onUpdate }: EducationProps) {
     onUpdate(education.filter((_, i) => i !== index));
   };
 
-  const handleChange = (field: keyof Cv["education"][number], value: string | number) => {
+  const handleChange = (
+    field: keyof Cv["education"][number],
+    value: string | number
+  ) => {
     setNewEducation((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -46,9 +55,14 @@ function Education({ education, onUpdate }: EducationProps) {
           <p>{edu.institution}</p>
           <label>Grad:</label>
           <p>{edu.degree}</p>
-          <label>År:</label>
-          <p>{edu.year}</p>
-          <button onClick={() => handleRemove(index)} className={styles.removeButton}>
+          <label>Fra år:</label>
+          <p>{edu.startYear}</p>
+          <label>Til år:</label>
+          <p>{edu.endYear}</p>
+          <button
+            onClick={() => handleRemove(index)}
+            className={styles.removeButton}
+          >
             Fjern
           </button>
         </div>
@@ -71,9 +85,16 @@ function Education({ education, onUpdate }: EducationProps) {
           />
           <input
             type="number"
-            placeholder="Skriv inn år"
-            value={newEducation.year}
-            onChange={(e) => handleChange("year", Number(e.target.value))}
+            placeholder="Fra år"
+            value={newEducation.startYear}
+            onChange={(e) => handleChange("startYear", Number(e.target.value))}
+            className={styles.input}
+          />
+          <input
+            type="number"
+            placeholder="Til år"
+            value={newEducation.endYear}
+            onChange={(e) => handleChange("endYear", Number(e.target.value))}
             className={styles.input}
           />
           <button onClick={handleSave} className={styles.saveButton}>
@@ -93,6 +114,8 @@ function Education({ education, onUpdate }: EducationProps) {
 }
 
 export default Education;
+
+
 
 
 

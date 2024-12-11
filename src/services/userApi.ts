@@ -21,32 +21,6 @@
       tagTypes: ["Users"],
       endpoints: (builder) => ({
 
-        getUsers: builder.query<User[], void>({
-          query: () => `/users`,
-          transformResponse: (response: { items: User[] }, meta) => {
-            const status = meta?.response?.status;
-            const userResponse = response.items.map((user) => ({
-              id: user._uuid,
-              name: user.name,
-              email: user.email,
-              role: user.role
-            }));
-    
-            if (status === 200) {
-              console.log(`Status: ${status} OK- Brukere er hentet`);
-            } else if (status === 403) {
-              console.error(`Status: ${status} Forbidden`);
-            } else {
-              console.error(`Uventet status: ${status}`);
-            }
-    
-            console.log(`Liste over GET /users:`, userResponse);
-            return response.items;
-          },
-          providesTags: ["Users"],
-        }),
-
-
         addUser: builder.mutation<void, Partial<User>>({
           query: (newUser) => ({
             url: `/users`,
@@ -61,15 +35,43 @@
             ],
           }),
           transformResponse: (_, meta) => {
-            console.log(`POST /users - Status: ${meta?.response?.status}`);
-            if (meta?.response?.status === 400) {
-              console.error("Brukeren finnes allerede.");
-            } else if (meta?.response?.status === 201) {
-              console.log("Bruker er opprettet.");
+            const status = meta?.response?.status;
+            console.log(`POST /users - Status: ${status}`);
+            if (status === 201) {
+                console.log("Status: 201 - Created: Bruker opprettet.");
+            } else if (status === 400) {
+                console.error("Status: 400 - Bad Request.");
+            } else {
+              console.error(`Status: ${status} - Uventet feil.`);
             }
-          },
+        },
           invalidatesTags: ["Users"],
         }),
+
+
+        getUsers: builder.query<User[], void>({
+          query: () => `/users`,
+          transformResponse: (response: { items: User[] }, meta) => {
+            const status = meta?.response?.status;
+            const userResponse = response.items.map((user) => ({
+              id: user._uuid,
+              name: user.name,
+              email: user.email,
+              role: user.role,
+            }));
+        
+            if (status === 200) {
+              console.log(`Status: ${status} - OK: Liste over brukere hentet.`, userResponse);
+            } else if (status === 403) {
+              console.error(`Status: ${status} - Forbidden: Mangler admin-rettigheter.`);
+            } else {
+              console.error(`Status: ${status} - Uventet feil.`);
+            }
+            return response.items;
+          },
+          providesTags: ["Users"],
+        }),
+        
 
         updateUser: builder.mutation<void, Partial<User> & { _uuid: string }>({
           query: ({ _uuid, ...updatedUser }) => ({
@@ -78,15 +80,20 @@
             body: updatedUser,
           }),
           transformResponse: (_, meta) => {
-            console.log(`Status: ${meta?.response?.status}`);
-            if (meta?.response?.status === 404) {
-              console.error("Brukeren ble ikke funnet.");
-            } else if (meta?.response?.status === 200) {
-              console.log("Bruker er oppdatert.");
+            const status = meta?.response?.status;
+            if (status === 200) {
+              console.log(`Status: ${status} - OK: Bruker oppdatert.`);
+            } else if (status === 403) {
+              console.error(`Status: ${status} - Forbidden: Mangler admin-rettigheter.`);
+            } else if (status === 404) {
+              console.error(`Status: ${status} - Not Found: Brukeren finnes ikke.`);
+            } else {
+              console.error(`Status: ${status} - Uventet feil.`);
             }
           },
           invalidatesTags: ["Users"],
         }),
+        
         
         deleteUser: builder.mutation<void, string>({
           query: (_uuid) => ({
@@ -94,11 +101,15 @@
             method: "DELETE",
           }),
           transformResponse: (_, meta) => {
-            console.log(`Status: ${meta?.response?.status}`);
-            if (meta?.response?.status === 404) {
-              console.error("Brukeren ble ikke funnet.");
-            } else if (meta?.response?.status === 200) {
-              console.log("Bruker er slettet.");
+            const status = meta?.response?.status;
+            if (status === 200) {
+              console.log(`Status: ${status} - OK: Bruker slettet.`);
+            } else if (status === 403) {
+              console.error(`Status: ${status} - Forbidden: Mangler admin-rettigheter.`);
+            } else if (status === 404) {
+              console.error(`Status: ${status} - Not Found: Brukeren finnes ikke.`);
+            } else {
+              console.error(`Status: ${status} - Uventet feil.`);
             }
           },
           invalidatesTags: ["Users"],

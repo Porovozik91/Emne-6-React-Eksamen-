@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Cv } from "../../types/cv.types";
+import { Cv } from "../types/cv.types";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY_SPEAKER;
@@ -21,7 +21,7 @@ export const cvApi = createApi({
   tagTypes: ["Cvs"],
   endpoints: (builder) => ({
 
-   //post
+
     createCv: builder.mutation<void, Partial<Cv>>({
       query: (newCv) => ({
         url: `/cvs`,
@@ -35,20 +35,18 @@ export const cvApi = createApi({
       transformResponse: (_, meta) => {
         const status = meta?.response?.status;
         console.log(`POST /cvs - Status: ${status}`);
-    
         if (status === 201) {
-          console.log(`Status: ${status} Created - CV opprettet.`);
+          console.log(`Status: 201 -Created: CV opprettet.`);
         } else if (status === 400) {
-          console.error(`Status: ${status} - Bad Request.`);
+          console.error("Status: 400 - Bad Request.");
         } else {
-          console.error("Kunne ikke opprette CV.");
+          console.error(`Status: ${status} - Uventet feil.`);
         }
       },
       invalidatesTags: ["Cvs"],
     }),
     
 
-    // Hent alle CV-er (for admin)
     getAllCvs: builder.query<Cv[], void>({
       query: () => `/cvs`,
       transformResponse: (response: { items: Cv[] }, meta) => {
@@ -70,7 +68,7 @@ export const cvApi = createApi({
       providesTags: ["Cvs"],
     }),
 
-    // Hent CV-er for en spesifikk bruker
+    
     getUserCvs: builder.query<Cv[], string>({
       query: (userId) => `/users/${userId}/cvs`,
       transformResponse: (response: { items: Cv[] }, meta) => {
@@ -81,7 +79,7 @@ export const cvApi = createApi({
         if (status === 200) {
           console.log(`Status: ${status} OK - CV-er for bruker ${userResponse} hentet.`);
         } else if (status === 403) {
-          console.error(`Status: ${status} Forbidden.`);
+          console.error(`Status: ${status} Forbidden`);
         } else {
           console.error(`Uventet status: ${status}`);
         }
@@ -91,26 +89,44 @@ export const cvApi = createApi({
       providesTags: ["Cvs"],
     }),
 
-    deleteCv: builder.mutation<void, string>({
-      query: (cvId) => ({
-        url: `/cvs/${cvId}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["Cvs"],
-    }),
-    
     updateCv: builder.mutation<void, Partial<Cv>>({
       query: (updatedCv) => ({
         url: `/cvs/${updatedCv._uuid}`,
         method: "PUT",
         body: updatedCv,
       }),
+      transformResponse: (_, meta) => {
+        const status = meta?.response?.status;
+        if (status === 200) {
+          console.log(`Status: ${status} - OK: Cv oppdatert.`);
+        } else if (status === 404) {
+          console.error(`Status: ${status} - Not Found: Cv-en finnes ikke eller mangler rettigheter.`);
+        } else {
+          console.error(`Status: ${status} - Uventet feil.`);
+        }
+      },
       invalidatesTags: ["Cvs"],
     }),
 
-   
-    })
-  })
+    deleteCv: builder.mutation<void, string>({
+      query: (cvId) => ({
+        url: `/cvs/${cvId}`,
+        method: "DELETE",
+      }),
+      transformResponse: (_, meta) => {
+        const status = meta?.response?.status;
+        if (status === 200) {
+          console.log(`Status: ${status} - OK: Cv slettet.`);
+        } else if (status === 404) {
+          console.error(`Status: ${status} - Not Found: Cv-en finnes ikke eller mangler rettigheter.`);
+        } else {
+          console.error(`Status: ${status} - Uventet feil.`);
+        }
+      },
+      invalidatesTags: ["Cvs"],
+    }),
+    }),
+  });
 
 export const { 
  useCreateCvMutation,
