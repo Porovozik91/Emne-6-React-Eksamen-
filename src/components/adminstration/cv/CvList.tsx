@@ -1,13 +1,16 @@
 import styles from "./CvList.module.css";
 import { Cv } from "../../../types/cv.types";
 
-interface CvListProps {
+interface CvList {
   cvs: Cv[];
   role: string;
   getUserNameById: (userId: string) => string; 
+  onEdit: (cv: Cv) => void;
+  onDelete: (cvId: string) => void;
+  onExport: (cv: Cv) => void;
 }
 
-const CvList = ({ cvs, role, getUserNameById }: CvListProps) => {
+const CvList = ({ cvs, role, getUserNameById, onEdit, onDelete, onExport }: CvList) => {
   const groupCvsByOwner = (cvs: Cv[]) => 
     cvs.reduce((grouped: Record<string, Cv[]>, cv) => {
       if (cv.userid) {
@@ -28,6 +31,15 @@ const CvList = ({ cvs, role, getUserNameById }: CvListProps) => {
             {ownerCvs.map((cv) => (
               <li key={cv._uuid} className={styles.cvItem}>
                 <h4>{cv.title}</h4>
+                <button onClick={() => onEdit(cv)} className={styles.editButton}>
+                  Rediger
+                </button>
+                <button onClick={() => onExport(cv)} className={styles.exportButton}>
+                  Vis CV
+                </button>
+                <button onClick={() => onDelete(cv._uuid)} className={styles.deleteButton}>
+                  Slett
+                </button>
               </li>
             ))}
           </ul>
@@ -38,6 +50,4 @@ const CvList = ({ cvs, role, getUserNameById }: CvListProps) => {
 };
 
 export default CvList;
-
-
 

@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import UserManager from "../components/adminstration/user/UserManager";
-import CreateUser from "../components/adminstration/user/UserCreator";
+import UserManager from "../components/adminstration/userManagement/UserManager";
+import CreateUser from "../components/adminstration/userManagement/UserCreator";
 import CreateCv from "../components/adminstration/cv/CreateCv";
 import MyCv from "../components/adminstration/cv/AllCvs";
 

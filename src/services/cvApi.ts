@@ -89,16 +89,33 @@ export const cvApi = createApi({
       providesTags: ["Cvs"],
     }),
 
+    deleteCv: builder.mutation<void, string>({
+      query: (cvId) => ({
+        url: `/cvs/${cvId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Cvs"],
+    }),
+    
+    updateCv: builder.mutation<void, Partial<Cv>>({
+      query: (updatedCv) => ({
+        url: `/cvs/${updatedCv._uuid}`,
+        method: "PUT",
+        body: updatedCv,
+      }),
+      invalidatesTags: ["Cvs"],
+    }),
+
    
     })
   })
 
 export const { 
-  useCreateCvMutation,
+ useCreateCvMutation,
   useGetAllCvsQuery,
   useLazyGetAllCvsQuery,
   useGetUserCvsQuery,
   useLazyGetUserCvsQuery,
+  useUpdateCvMutation,
+  useDeleteCvMutation
 } = cvApi;
-  
-

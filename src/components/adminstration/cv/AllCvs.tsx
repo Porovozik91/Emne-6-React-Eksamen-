@@ -2,11 +2,16 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import {
-  useLazyGetAllCvsQuery
+  useLazyGetAllCvsQuery,
+  useUpdateCvMutation,
+  useDeleteCvMutation,
 } from "../../../services/cvApi";
 import { useLazyGetUsersQuery } from "../../../services/userApi";
 import CvList from "./CvList";
+import EditCvModal from "./EditCvModal";
+import PdfExportModal from "./PdfExportModal";
 import styles from "./AllCvs.module.css";
+import { Cv } from "../../../types/cv.types";
 import { User } from "../../../types/user.types";
 
 const AllCvs = () => {
@@ -14,6 +19,10 @@ const AllCvs = () => {
   const userid = useSelector((state: RootState) => state.user._uuid);
   const [triggerGetAllCvs, { data: allCvs = [], isLoading }] = useLazyGetAllCvsQuery();
   const [triggerGetUsers, { data: users = [] }] = useLazyGetUsersQuery();
+  const [updateCv] = useUpdateCvMutation();
+  const [deleteCv] = useDeleteCvMutation();
+  const [selectedCv, setSelectedCv] = useState<Cv | null>(null);
+  const [pdfCv, setPdfCv] = useState<Cv | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   // Hent CV-er og brukere ved første render
@@ -45,7 +54,16 @@ const AllCvs = () => {
     return user?.name || "Ukjent bruker";
   };
 
- 
+  // Håndterer sletting av en CV
+  const handleDelete = async (cvId: string) => {
+    try {
+      await deleteCv(cvId).unwrap();
+      alert("CV slettet!");
+    } catch (error) {
+      console.error("Kunne ikke slette CV:", error);
+      alert("Kunne ikke slette CV. Prøv igjen.");
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -66,11 +84,25 @@ const AllCvs = () => {
         cvs={filteredCvs}
         role={role}
         getUserNameById={getUserNameById} // Sender funksjonen til CvList
+        onEdit={setSelectedCv}
+        onDelete={handleDelete}
+        onExport={setPdfCv}
       />
+      {selectedCv && (
+        <EditCvModal
+          cv={selectedCv}
+          onClose={() => setSelectedCv(null)}
+          onUpdate={async (updatedCv) => {
+            await updateCv(updatedCv).unwrap();
+            alert("CV oppdatert!");
+            setSelectedCv(null);
+          }}
+        />
+      )}
+      {pdfCv && <PdfExportModal cv={pdfCv} onClose={() => setPdfCv(null)} />}
     </div>
   );
 };
 
 export default AllCvs;
-
 
