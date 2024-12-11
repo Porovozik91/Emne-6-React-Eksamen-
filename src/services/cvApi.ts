@@ -43,11 +43,15 @@ export const cvApi = createApi({
       invalidatesTags: ["Cvs"],
     }),
 
-    // Hent alle CV-er (for admin)
+   
     getAllCvs: builder.query<Cv[], void>({
       query: () => `/cvs`,
       transformResponse: (response: { items: Cv[] }, meta) => {
         const status = meta?.response?.status;
+        const userResponse = response.items.map((cv) => ({
+          userId: cv.userid,
+          title: cv.title
+        }));
         if (status === 200) {
           console.log(`Status: ${status} OK - CV-er hentet.`);
         } else if (status === 403) {
@@ -55,31 +59,11 @@ export const cvApi = createApi({
         } else {
           console.error(`Uventet status: ${status}`);
         }
-        console.log(`GET /cvs - Respons:`, response.items);
+        console.log(`Liste over GET /cvs - Respons:`, userResponse);
         return response.items;
       },
       providesTags: ["Cvs"],
     }),
-
-    // Hent CV-er for en spesifikk bruker
-    getUserCvs: builder.query<Cv[], string>({
-      query: (userId) => `/users/${userId}/cvs`,
-      transformResponse: (response: { items: Cv[] }, meta) => {
-        const status = meta?.response?.status;
-        if (status === 200) {
-          console.log(`Status: ${status} OK - CV-er for bruker ${userId} hentet.`);
-        } else if (status === 404) {
-          console.error(`Status: ${status} Not Found - Ingen CV-er funnet for bruker.`);
-        } else {
-          console.error(`Uventet status: ${status}`);
-        }
-        console.log(`GET /users/${userId}/cvs - Respons:`, response.items);
-        return response.items;
-      },
-      providesTags: ["Cvs"],
-    }),
-
-   
     })
   })
 
@@ -87,8 +71,6 @@ export const {
   useCreateCvMutation,
   useGetAllCvsQuery,
   useLazyGetAllCvsQuery,
-  useGetUserCvsQuery,
-  useLazyGetUserCvsQuery,
 } = cvApi;
   
 

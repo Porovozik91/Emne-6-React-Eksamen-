@@ -26,21 +26,21 @@
           transformResponse: (response: { items: User[] }, meta) => {
             const status = meta?.response?.status;
             const userResponse = response.items.map((user) => ({
-              _id: user._uuid,
+              id: user._uuid,
               name: user.name,
               email: user.email,
-              role: user.role,
+              role: user.role
             }));
     
             if (status === 200) {
-              console.log(`Status: ${status} OK`);
+              console.log(`Status: ${status} OK- Brukere er hentet`);
             } else if (status === 403) {
               console.error(`Status: ${status} Forbidden`);
             } else {
               console.error(`Uventet status: ${status}`);
             }
     
-            console.log(`GET /users:`, userResponse);
+            console.log(`Liste over GET /users:`, userResponse);
             return response.items;
           },
           providesTags: ["Users"],

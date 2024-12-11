@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import {
-  useLazyGetAllCvsQuery,
+  useLazyGetAllCvsQuery
 } from "../../../services/cvApi";
 import { useLazyGetUsersQuery } from "../../../services/userApi";
 import CvList from "./CvList";
