@@ -21,7 +21,7 @@ export const cvApi = createApi({
   tagTypes: ["Cvs"],
   endpoints: (builder) => ({
 
-    // Opprett ny CV
+   
     createCv: builder.mutation<void, Partial<Cv>>({
       query: (newCv) => ({
         url: `/cvs`,
@@ -43,35 +43,52 @@ export const cvApi = createApi({
       invalidatesTags: ["Cvs"],
     }),
 
-    getCvs: builder.query<Cv[], void>({
-      query: () => "/cvs",
+    // Hent alle CV-er (for admin)
+    getAllCvs: builder.query<Cv[], void>({
+      query: () => `/cvs`,
+      transformResponse: (response: { items: Cv[] }, meta) => {
+        const status = meta?.response?.status;
+        if (status === 200) {
+          console.log(`Status: ${status} OK - CV-er hentet.`);
+        } else if (status === 403) {
+          console.error(`Status: ${status} Forbidden - Tilgang nektet.`);
+        } else {
+          console.error(`Uventet status: ${status}`);
+        }
+        console.log(`GET /cvs - Respons:`, response.items);
+        return response.items;
+      },
       providesTags: ["Cvs"],
     }),
-    
-    deleteCv: builder.mutation<void, string>({
-      query: (cvId) => ({
-        url: `/cvs/${cvId}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["Cvs"],
+
+    // Hent CV-er for en spesifikk bruker
+    getUserCvs: builder.query<Cv[], string>({
+      query: (userId) => `/users/${userId}/cvs`,
+      transformResponse: (response: { items: Cv[] }, meta) => {
+        const status = meta?.response?.status;
+        if (status === 200) {
+          console.log(`Status: ${status} OK - CV-er for bruker ${userId} hentet.`);
+        } else if (status === 404) {
+          console.error(`Status: ${status} Not Found - Ingen CV-er funnet for bruker.`);
+        } else {
+          console.error(`Uventet status: ${status}`);
+        }
+        console.log(`GET /users/${userId}/cvs - Respons:`, response.items);
+        return response.items;
+      },
+      providesTags: ["Cvs"],
     }),
-    updateCv: builder.mutation<void, Partial<Cv>>({
-      query: (updatedCv) => ({
-        url: `/cvs/${updatedCv._uuid}`,
-        method: "PUT",
-        body: updatedCv,
-      }),
-      invalidatesTags: ["Cvs"],
-    }),
-  }),
-});
+
+   
+    })
+  })
 
 export const { 
   useCreateCvMutation,
-  useGetCvsQuery, 
-  useLazyGetCvsQuery, 
-  useDeleteCvMutation, 
-  useUpdateCvMutation 
+  useGetAllCvsQuery,
+  useLazyGetAllCvsQuery,
+  useGetUserCvsQuery,
+  useLazyGetUserCvsQuery,
 } = cvApi;
   
 

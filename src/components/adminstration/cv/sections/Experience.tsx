@@ -1,21 +1,40 @@
+import { useState } from "react";
 import styles from "../createCv.module.css";
+import { Cv } from "../../../../types/cv.types";
 
-interface Experience {
-  title: string;
-  company: string;
-  years: number;
+interface ExperienceProps {
+  experience: Cv["experience"]; // Bruker Cv-typen direkte
+  onUpdate: (experience: Cv["experience"]) => void;
 }
 
-interface ExperiencesProps {
-  experience: Experience[];
-  onUpdate: (experience: Experience[]) => void;
-}
+function Experience({ experience, onUpdate }: ExperienceProps) {
+  const [isAdding, setIsAdding] = useState(false);
+  const [newExperience, setNewExperience] = useState<Cv["experience"][number]>({
+    title: "",
+    company: "",
+    years: 0,
+  });
 
-function Experiences({ experience, onUpdate }: ExperiencesProps) {
-  const handleChange = (index: number, field: keyof Experience, value: string | number) => {
-    const updatedExperience = [...experience];
-    updatedExperience[index] = { ...updatedExperience[index], [field]: value };
-    onUpdate(updatedExperience);
+  const handleAddClick = () => setIsAdding(true);
+
+  const handleCancelClick = () => {
+    setIsAdding(false);
+    setNewExperience({ title: "", company: "", years: 0 });
+  };
+
+  const handleSave = () => {
+    if (newExperience.title.trim() && newExperience.company.trim()) {
+      onUpdate([...experience, newExperience]);
+    }
+    handleCancelClick();
+  };
+
+  const handleRemove = (index: number) => {
+    onUpdate(experience.filter((_, i) => i !== index));
+  };
+
+  const handleChange = (field: keyof Cv["experience"][number], value: string | number) => {
+    setNewExperience((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -24,47 +43,54 @@ function Experiences({ experience, onUpdate }: ExperiencesProps) {
       {experience.map((exp, index) => (
         <div key={index} className={styles.sectionItem}>
           <label>Stilling:</label>
-          <input
-            type="text"
-            placeholder="Skriv inn stilling"
-            value={exp.title}
-            onChange={(e) => handleChange(index, "title", e.target.value)}
-            className={styles.input}
-          />
+          <p>{exp.title}</p>
           <label>Firma:</label>
-          <input
-            type="text"
-            placeholder="Skriv inn firmanavn"
-            value={exp.company}
-            onChange={(e) => handleChange(index, "company", e.target.value)}
-            className={styles.input}
-          />
+          <p>{exp.company}</p>
           <label>År:</label>
-          <input
-            type="number"
-            placeholder="Skriv inn år"
-            value={exp.years}
-            onChange={(e) => handleChange(index, "years", Number(e.target.value))}
-            className={styles.input}
-          />
-          <button
-            onClick={() => onUpdate(experience.filter((_, i) => i !== index))}
-            className={styles.removeButton}
-          >
+          <p>{exp.years}</p>
+          <button onClick={() => handleRemove(index)} className={styles.removeButton}>
             Fjern
           </button>
         </div>
       ))}
-      <button
-        onClick={() =>
-          onUpdate([...experience, { title: "", company: "", years: 0 }])
-        }
-        className={styles.addButton}
-      >
-        Legg til arbeidserfaring
-      </button>
+      {isAdding ? (
+        <div className={styles.sectionItem}>
+          <input
+            type="text"
+            placeholder="Skriv inn stilling"
+            value={newExperience.title}
+            onChange={(e) => handleChange("title", e.target.value)}
+            className={styles.input}
+          />
+          <input
+            type="text"
+            placeholder="Skriv inn firma"
+            value={newExperience.company}
+            onChange={(e) => handleChange("company", e.target.value)}
+            className={styles.input}
+          />
+          <input
+            type="number"
+            placeholder="Skriv inn år"
+            value={newExperience.years}
+            onChange={(e) => handleChange("years", Number(e.target.value))}
+            className={styles.input}
+          />
+          <button onClick={handleSave} className={styles.saveButton}>
+            Lagre
+          </button>
+          <button onClick={handleCancelClick} className={styles.cancelButton}>
+            Avbryt
+          </button>
+        </div>
+      ) : (
+        <button onClick={handleAddClick} className={styles.addButton}>
+          Legg til arbeidserfaring
+        </button>
+      )}
     </div>
   );
 }
 
-export default Experiences;
+export default Experience;
+

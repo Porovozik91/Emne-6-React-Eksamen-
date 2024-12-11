@@ -1,20 +1,39 @@
+import { useState } from "react";
 import styles from "../createCv.module.css";
-
-interface Reference {
-  name: string;
-  contactInfo: number;
-}
+import { Cv } from "../../../../types/cv.types";
 
 interface ReferencesProps {
-  references: Reference[];
-  onUpdate: (references: Reference[]) => void;
+  references: Cv["references"]; // Bruker Cv-typen direkte
+  onUpdate: (references: Cv["references"]) => void;
 }
 
 function References({ references, onUpdate }: ReferencesProps) {
-  const handleChange = (index: number, field: keyof Reference, value: string | number) => {
-    const updatedReferences = [...references];
-    updatedReferences[index] = { ...updatedReferences[index], [field]: value };
-    onUpdate(updatedReferences);
+  const [isAdding, setIsAdding] = useState(false);
+  const [newReference, setNewReference] = useState<Cv["references"][number]>({
+    name: "",
+    contactInfo: 0,
+  });
+
+  const handleAddClick = () => setIsAdding(true);
+
+  const handleCancelClick = () => {
+    setIsAdding(false);
+    setNewReference({ name: "", contactInfo: 0 });
+  };
+
+  const handleSave = () => {
+    if (newReference.name.trim()) {
+      onUpdate([...references, newReference]);
+    }
+    handleCancelClick();
+  };
+
+  const handleRemove = (index: number) => {
+    onUpdate(references.filter((_, i) => i !== index));
+  };
+
+  const handleChange = (field: keyof Cv["references"][number], value: string | number) => {
+    setNewReference((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -23,39 +42,45 @@ function References({ references, onUpdate }: ReferencesProps) {
       {references.map((ref, index) => (
         <div key={index} className={styles.sectionItem}>
           <label>Navn:</label>
-          <input
-            type="text"
-            placeholder="Skriv inn referansens navn"
-            value={ref.name}
-            onChange={(e) => handleChange(index, "name", e.target.value)}
-            className={styles.input}
-          />
+          <p>{ref.name}</p>
           <label>Kontaktinformasjon:</label>
-          <input
-            type="number"
-            placeholder="Skriv inn kontaktinformasjon"
-            value={ref.contactInfo}
-            onChange={(e) => handleChange(index, "contactInfo", Number(e.target.value))}
-            className={styles.input}
-          />
-          <button
-            onClick={() => onUpdate(references.filter((_, i) => i !== index))}
-            className={styles.removeButton}
-          >
+          <p>{ref.contactInfo}</p>
+          <button onClick={() => handleRemove(index)} className={styles.removeButton}>
             Fjern
           </button>
         </div>
       ))}
-      <button
-        onClick={() =>
-          onUpdate([...references, { name: "", contactInfo: 0 }])
-        }
-        className={styles.addButton}
-      >
-        Legg til referanse
-      </button>
+      {isAdding ? (
+        <div className={styles.sectionItem}>
+          <input
+            type="text"
+            placeholder="Skriv inn navn"
+            value={newReference.name}
+            onChange={(e) => handleChange("name", e.target.value)}
+            className={styles.input}
+          />
+          <input
+            type="number"
+            placeholder="Skriv inn kontaktinformasjon"
+            value={newReference.contactInfo}
+            onChange={(e) => handleChange("contactInfo", Number(e.target.value))}
+            className={styles.input}
+          />
+          <button onClick={handleSave} className={styles.saveButton}>
+            Lagre
+          </button>
+          <button onClick={handleCancelClick} className={styles.cancelButton}>
+            Avbryt
+          </button>
+        </div>
+      ) : (
+        <button onClick={handleAddClick} className={styles.addButton}>
+          Legg til referanse
+        </button>
+      )}
     </div>
   );
 }
 
 export default References;
+

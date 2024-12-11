@@ -14,10 +14,10 @@ import { validateCv, ValidationResult } from "../../../utils/createCvValidations
 const initialCvState: Omit<Cv, "_uuid"> = {
   title: "",
   personalInfo: { name: "", email: "", phone: 0 },
-  skills: [""],
-  education: [{ institution: "", degree: "", year: 0 }],
-  experience: [{ title: "", company: "", years: 0 }],
-  references: [{ name: "", contactInfo: 0 }],
+  skills: [],
+  education: [],
+  experience: [],
+  references: [],
 };
 
 const CreateCv = () => {

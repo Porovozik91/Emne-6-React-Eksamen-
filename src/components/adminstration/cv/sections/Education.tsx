@@ -1,21 +1,40 @@
+import { useState } from "react";
 import styles from "../createCv.module.css";
+import { Cv } from "../../../../types/cv.types";
 
-interface Education {
-  institution: string;
-  degree: string;
-  year: number;
+interface EducationProps {
+  education: Cv["education"]; // Bruker Cv-typen direkte
+  onUpdate: (education: Cv["education"]) => void;
 }
 
-interface EducationsProps {
-  education: Education[];
-  onUpdate: (education: Education[]) => void;
-}
+function Education({ education, onUpdate }: EducationProps) {
+  const [isAdding, setIsAdding] = useState(false);
+  const [newEducation, setNewEducation] = useState<Cv["education"][number]>({
+    institution: "",
+    degree: "",
+    year: 0,
+  });
 
-function Educations({ education, onUpdate }: EducationsProps) {
-  const handleChange = (index: number, field: keyof Education, value: string | number) => {
-    const updatedEducation = [...education];
-    updatedEducation[index] = { ...updatedEducation[index], [field]: value };
-    onUpdate(updatedEducation);
+  const handleAddClick = () => setIsAdding(true);
+
+  const handleCancelClick = () => {
+    setIsAdding(false);
+    setNewEducation({ institution: "", degree: "", year: 0 });
+  };
+
+  const handleSave = () => {
+    if (newEducation.institution.trim() && newEducation.degree.trim()) {
+      onUpdate([...education, newEducation]);
+    }
+    handleCancelClick();
+  };
+
+  const handleRemove = (index: number) => {
+    onUpdate(education.filter((_, i) => i !== index));
+  };
+
+  const handleChange = (field: keyof Cv["education"][number], value: string | number) => {
+    setNewEducation((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -24,45 +43,57 @@ function Educations({ education, onUpdate }: EducationsProps) {
       {education.map((edu, index) => (
         <div key={index} className={styles.sectionItem}>
           <label>Institusjon:</label>
-          <input
-            type="text"
-            placeholder="Skriv inn institusjon"
-            value={edu.institution}
-            onChange={(e) => handleChange(index, "institution", e.target.value)}
-            className={styles.input}
-          />
+          <p>{edu.institution}</p>
           <label>Grad:</label>
-          <input
-            type="text"
-            placeholder="Skriv inn grad"
-            value={edu.degree}
-            onChange={(e) => handleChange(index, "degree", e.target.value)}
-            className={styles.input}
-          />
+          <p>{edu.degree}</p>
           <label>År:</label>
-          <input
-            type="number"
-            placeholder="Skriv inn år"
-            value={edu.year}
-            onChange={(e) => handleChange(index, "year", Number(e.target.value))}
-            className={styles.input}
-          />
-          <button
-            onClick={() => onUpdate(education.filter((_, i) => i !== index))}
-            className={styles.removeButton}
-          >
+          <p>{edu.year}</p>
+          <button onClick={() => handleRemove(index)} className={styles.removeButton}>
             Fjern
           </button>
         </div>
       ))}
-      <button
-        onClick={() => onUpdate([...education, { institution: "", degree: "", year: 0 }])}
-        className={styles.addButton}
-      >
-        Legg til utdanning
-      </button>
+      {isAdding ? (
+        <div className={styles.sectionItem}>
+          <input
+            type="text"
+            placeholder="Skriv inn institusjon"
+            value={newEducation.institution}
+            onChange={(e) => handleChange("institution", e.target.value)}
+            className={styles.input}
+          />
+          <input
+            type="text"
+            placeholder="Skriv inn grad"
+            value={newEducation.degree}
+            onChange={(e) => handleChange("degree", e.target.value)}
+            className={styles.input}
+          />
+          <input
+            type="number"
+            placeholder="Skriv inn år"
+            value={newEducation.year}
+            onChange={(e) => handleChange("year", Number(e.target.value))}
+            className={styles.input}
+          />
+          <button onClick={handleSave} className={styles.saveButton}>
+            Lagre
+          </button>
+          <button onClick={handleCancelClick} className={styles.cancelButton}>
+            Avbryt
+          </button>
+        </div>
+      ) : (
+        <button onClick={handleAddClick} className={styles.addButton}>
+          Legg til utdanning
+        </button>
+      )}
     </div>
   );
 }
 
-export default Educations;
+export default Education;
+
+
+
+
