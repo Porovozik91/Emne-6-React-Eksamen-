@@ -29,8 +29,6 @@ const SignIn = () => {
     const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
     const adminRole = import.meta.env.VITE_ADMIN_ROLE;
 
- 
-
     try {
       const hashedInputPassword = await hashPassword(password);
 
@@ -61,7 +59,14 @@ const SignIn = () => {
   return (
     <section className={styles.signInOverlay}>
       <h2>Logg Inn</h2>
-     <form>
+     <form
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault(); 
+          handleLogin(); 
+        }
+      }}
+     >
       <label>Brukernavn:</label>
      <input
         type="text"
