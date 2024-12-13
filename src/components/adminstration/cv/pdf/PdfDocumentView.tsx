@@ -1,5 +1,5 @@
 import { Page, Text, View, Document } from "@react-pdf/renderer";
-import { DocumentPdf } from "../../../types/cv.types";
+import { DocumentPdf } from "../../../../types/cv.types";
 import PdfStyling from "./pdfStyling";
 
 const PdfDocument = ({ cv, selectedSections }: DocumentPdf) => {
@@ -38,7 +38,7 @@ const PdfDocument = ({ cv, selectedSections }: DocumentPdf) => {
             {cv.education.map((edu, index) => (
               <View key={index} style={PdfStyling.item}>
                 <Text style={PdfStyling.text}>Institusjon: {edu.institution}</Text>
-                <Text style={PdfStyling.text}>Grad: {edu.degree}</Text>
+                <Text style={PdfStyling.text}>Karakter: {edu.degree}</Text>
                 {isValidYear(edu.startYear) && (
                   <Text style={PdfStyling.text}>
                     Fra år: {edu.startYear}
@@ -60,7 +60,7 @@ const PdfDocument = ({ cv, selectedSections }: DocumentPdf) => {
             {cv.experience.map((exp, index) => (
               <View key={index} style={PdfStyling.item}>
                 <Text style={PdfStyling.text}>Tittel: {exp.title}</Text>
-                <Text style={PdfStyling.text}>Firma: {exp.company}</Text>
+                <Text style={PdfStyling.text}>Arbeidsgiver: {exp.company}</Text>
                 {isValidYear(exp.startYear) && (
                   <Text style={PdfStyling.text}>
                     Fra år: {exp.startYear}

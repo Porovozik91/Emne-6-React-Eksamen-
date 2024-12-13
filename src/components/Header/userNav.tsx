@@ -3,9 +3,9 @@ import styles from "./header.module.css";
 
 const UserNavigation = () => {
   return (
-    <div className={styles.navigation}>
-      <h1 className={styles.logo}>User Panel</h1>
-      <ul className={styles.navList}>
+    <section>
+      <h1>User Panel</h1>
+      <ul>
         <li>
           <NavLink
             to="/user/cvs-management"
@@ -17,7 +17,7 @@ const UserNavigation = () => {
           </NavLink>
         </li>
       </ul>
-    </div>
+    </section>
   );
 };
 

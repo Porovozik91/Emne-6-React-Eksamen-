@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import UserManager from "../components/adminstration/userManagement/UserManager";
-import AllCvs from "../components/adminstration/cv/AllCvs";
+import AllCvs from "../components/adminstration/cv/allAndAdministrate/AllCvs";
 
 const AdminRoutes = () => (
   <Routes>

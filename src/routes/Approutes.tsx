@@ -16,13 +16,13 @@ import NotFound from "../pages/notFound/NotFound";
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
-  const [authLoaded, setAuthLoaded] = useState(false); // Kontroll for lasting
+  const [authLoaded, setAuthLoaded] = useState(false); 
 
   useEffect(() => {
     const initializeUser = async () => {
       const jwtToken = getCookie("authToken");
       if (!jwtToken) {
-        setAuthLoaded(true); // Angi at autentiseringen er ferdig, selv uten JWT
+        setAuthLoaded(true); 
         return;
       }
 

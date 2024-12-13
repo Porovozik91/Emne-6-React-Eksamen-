@@ -1,6 +1,6 @@
 import { useState } from "react";
-import styles from "./CvList.module.css";
-import { Cv, List } from "../../../types/cv.types";
+import styles from "./cvList.module.css";
+import { Cv, List } from "../../../../types/cv.types";
 
 
 const CvList = ({ cvs, role, getUserNameById, onEdit, onDelete, onExport }: List) => {

@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
+import styles from "./landingPage.module.css";
 
 const LandingPage = () => {
   return (
-    <section>
+    <section className={styles.landingPageOverlay}>
       <main>
         <h1>Bygg din perfekte CV</h1>
         <h2>Skap, tilpass, og gjør inntrykk!</h2>
@@ -14,7 +15,7 @@ const LandingPage = () => {
         karrieren!
         </p>
         <Link to="/login">
-          <button>Logg inn</button>
+        <button>Gå til påloggingssiden</button>
         </Link>
       </main>
     </section>

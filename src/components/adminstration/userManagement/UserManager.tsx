@@ -128,10 +128,10 @@ const UserManager = () => {
   if (isError) return <p>Kunne ikke laste brukere. Prøv igjen senere.</p>;
 
   return (
-    <section className={styles.container}>
+    <section className={styles.userContainer}>
       <header>
         <h2>Brukeradministrasjon</h2>
-      </header>
+     
       {message && <p className={styles.message}>{message}</p>}
       <div>
       {isUserCreatorModalOpen && (
@@ -145,7 +145,7 @@ const UserManager = () => {
        </button>           
      </div>
       <form>
-        <label htmlFor="search">Søk etter brukere</label>
+        <label>Søk etter brukere</label>
         <input
           id="search"
           type="text"
@@ -155,7 +155,7 @@ const UserManager = () => {
           placeholder="Skriv inn brukernavn"
         />
       </form>
-
+      </header>
       <ul className={styles.userList}>
         {filteredUsers.map((user) => (
           <li
@@ -167,8 +167,21 @@ const UserManager = () => {
               setSelectedUser(user._uuid === selectedUser?._uuid ? null : user)
             }
           >
+           <div className={styles.uName}>
+           <h3>Navn</h3>
             <p>{user.name}</p>
-            <p>{user.email}</p>
+           </div>
+
+           <div className={styles.uEmail}>
+            <h3>E-post</h3>
+           <p>{user.email}</p>
+           </div>
+
+           <div className={styles.uRole}>
+            <h3>Bruker rolle:</h3>
+           <p>{user.role}</p>
+           </div>
+
             {selectedUser?._uuid === user._uuid && (
               <div className={styles.actions}>
                 <button
@@ -197,19 +210,19 @@ const UserManager = () => {
       </ul>
 
       {isEditModalOpen && selectedUser && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
+        <div className={styles.userModal}>
+          <div className={styles.userModalContent}>
             <h3>Rediger bruker</h3>
             {renderValidationSummary()}
             {renderInput("Navn", "text", selectedUser.name || "", "name")}
             {renderInput("E-post", "email", selectedUser.email || "", "email")}
             {renderInput("Passord", "password", selectedUser.password || "", "password")}
       
-            <div className={styles.modalActions}>
+            <div className={styles.userModalActions}>
               <button
                 onClick={handleUpdate}
                 disabled={isUpdating}
-                className={styles.saveButton}
+                className={styles.userSaveButton}
               >
                 {isUpdating ? "Lagrer..." : "Lagre"}
               </button>

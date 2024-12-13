@@ -30,10 +30,12 @@
                 name: newUser.name,
                 email: newUser.email,
                 password: newUser.password,
-                role: "user",
+                role: newUser.role,
               },
             ],
           }),
+
+
           transformResponse: (_, meta) => {
             const status = meta?.response?.status;
             console.log(`POST /users - Status: ${status}`);

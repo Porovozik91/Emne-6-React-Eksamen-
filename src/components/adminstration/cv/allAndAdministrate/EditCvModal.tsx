@@ -1,10 +1,10 @@
 import { useState } from "react";
-import styles from "./EditCvModal.module.css";
-import Skills from "./sections/Skills";
-import Educations from "./sections/Education";
-import Experiences from "./sections/Experience";
-import References from "./sections/References";
-import { Cv, CvModalEdit, } from "../../../types/cv.types";
+import styles from "./editCvModal.module.css";
+import Skills from "../sections/Skills";
+import Educations from "../sections/Education";
+import Experiences from "../sections/Experience";
+import References from "../sections/References";
+import { Cv, CvModalEdit, } from "../../../../types/cv.types";
 
 const EditCvModal = ({ cv, onClose, onUpdate }: CvModalEdit) => {
   const [editedCv, setEditedCv] = useState<Cv>(cv);

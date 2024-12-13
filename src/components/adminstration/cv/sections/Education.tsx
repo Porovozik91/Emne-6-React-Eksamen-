@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "../createCv.module.css";
+import styles from "../create/createCv.module.css";
 import { Cv } from "../../../../types/cv.types";
 
 interface EducationProps {
@@ -53,7 +53,7 @@ function Education({ education, onUpdate }: EducationProps) {
         <div key={index} className={styles.sectionItem}>
           <label>Institusjon:</label>
           <p>{edu.institution}</p>
-          <label>Grad:</label>
+          <label>Karakter:</label>
           <p>{edu.degree}</p>
           <label>Fra år:</label>
           <p>{edu.startYear}</p>
@@ -78,7 +78,7 @@ function Education({ education, onUpdate }: EducationProps) {
           />
           <input
             type="text"
-            placeholder="Skriv inn grad"
+            placeholder="Skriv inn karakter"
             value={newEducation.degree}
             onChange={(e) => handleChange("degree", e.target.value)}
             className={styles.input}

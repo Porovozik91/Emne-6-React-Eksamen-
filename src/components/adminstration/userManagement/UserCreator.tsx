@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useLazyGetUsersQuery, useAddUserMutation } from "../../../services/userApi";
-import styles from "./UserCreator.module.css";
+import styles from "./userCreator.module.css";
 import hashPassword from "../../../utils/hashPassword";
 import { validateUser } from "../../../utils/validateUser";
 import { existingUsersCheck } from "../../../utils/exsistingUsersCheck";
 
 const initialUserState = { name: "", email: "", password: "" };
+
+const defaultRole = import.meta.env.VITE_SIGNUP_ROLE_SWITCHER || "user";
 
 const UserCreator = () => {
   const [addUser, { isLoading: isSubmitting }] = useAddUserMutation();
@@ -45,7 +47,7 @@ const UserCreator = () => {
         name: newUser.name,
         email: newUser.email,
         password: hashedPassword,
-        role: "user",
+        role: defaultRole,
       }).unwrap();
 
       setMessage(`Bruker "${newUser.name}" er lagt til!`);
@@ -78,7 +80,7 @@ const UserCreator = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <section className={styles.container}>
       <h2>Opprett ny bruker</h2>
 
       {message && (
@@ -120,7 +122,7 @@ const UserCreator = () => {
       >
         {isSubmitting ? "Legger til bruker..." : "Legg til bruker"}
       </button>
-    </div>
+    </section>
   );
 };
 

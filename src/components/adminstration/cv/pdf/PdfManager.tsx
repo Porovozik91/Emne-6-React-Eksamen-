@@ -2,7 +2,7 @@ import { useState } from "react";
 import { PDFViewer, BlobProvider } from "@react-pdf/renderer";
 import PdfDocumentView from "./PdfDocumentView";
 import styles from "./pdfManager.module.css";
-import { Pdf, Section } from "../../../types/cv.types";
+import { Pdf, Section } from "../../../../types/cv.types";
 
 
 const PdfManager = ({ cv, onClose }: Pdf) => {

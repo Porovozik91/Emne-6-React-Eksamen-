@@ -17,18 +17,20 @@ const Header = () => {
   };
 
   return (
-    <header className={styles.header}>
-      <nav className={styles.navbar}>
-        {role === "admin" && <AdminNav />}
-        {role === "user" && <UserNav />}
-      </nav>
-      <div className={styles.userSection}>
-        <span className={styles.username}>Logget inn som: {username}</span>
-        <button onClick={handleLogout} className={styles.logoutButton}>
-          Logg ut
-        </button>
-      </div>
-    </header>
+   <header className={styles.header}>
+  <nav className={styles.headerNavigation}>
+      {role === "admin" && <AdminNav />}
+      {role === "user" && <UserNav />}
+  <ul className={styles.userInfo}>
+  <li>Velkommen: {username}</li>
+  <li>
+    <button onClick={handleLogout} className={styles.logoutButton}>
+      Logg ut
+    </button>
+  </li>
+</ul>
+  </nav>
+</header>
   );
 };
 

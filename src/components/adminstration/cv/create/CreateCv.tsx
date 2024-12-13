@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useCreateCvMutation } from "../../../services/cvApi";
-import { useLazyGetUsersQuery } from "../../../services/userApi";
-import { RootState } from "../../../redux/store";
-import { Cv } from "../../../types/cv.types";
+import { useCreateCvMutation } from "../../../../services/cvApi";
+import { useLazyGetUsersQuery } from "../../../../services/userApi";
+import { RootState } from "../../../../redux/store";
+import { Cv } from "../../../../types/cv.types";
 import styles from "./createCv.module.css";
-import Skills from "./sections/Skills";
-import Educations from "./sections/Education";
-import Experiences from "./sections/Experience";
-import References from "./sections/References";
-import { validateCv, ValidationResult } from "../../../utils/createCvValidations";
+import Skills from "../sections/Skills";
+import Educations from "../sections/Education";
+import Experiences from "../sections/Experience";
+import References from "../sections/References";
+import { validateCv, ValidationResult } from "../../../../utils/createCvValidations";
 
 const initialCvState: Omit<Cv, "_uuid"> = {
   title: "",
@@ -46,6 +46,14 @@ const CreateCv = () => {
     }));
   };
 
+  const resetForm = () => {
+    setCv(initialCvState);
+    setSelectedUserId(null);
+    setValidationErrors({});
+    setMessage(null);
+    setIsError(false);
+  };
+
   const handleSubmit = async () => {
     setValidationErrors({});
     const validation = validateCv(cv);
@@ -69,8 +77,7 @@ const CreateCv = () => {
       await createCv({ userid: userIdToUse, ...cv }).unwrap();
       setMessage("CV opprettet!");
       setIsError(false);
-      setCv(initialCvState);
-      setSelectedUserId(null);
+      resetForm(); 
     } catch (error) {
       console.error("Feil ved opprettelse av CV:", error);
       setMessage("Kunne ikke opprette CV. Prøv igjen.");
@@ -194,7 +201,12 @@ const CreateCv = () => {
         onUpdate={(references) => updateSection("references", references)}
       />
 
-      <button onClick={handleSubmit} className={styles.submitButton} disabled={isSubmitting}>
+      <button
+        onClick={handleSubmit}
+        className={styles.submitButton}
+        disabled={isSubmitting}
+        data-testid="submit-cv-button"
+      >
         {isSubmitting ? "Oppretter CV..." : "Opprett CV"}
       </button>
 

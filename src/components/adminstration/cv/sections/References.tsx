@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "../createCv.module.css";
+import styles from "../create/createCv.module.css";
 import { Cv } from "../../../../types/cv.types";
 
 interface ReferencesProps {

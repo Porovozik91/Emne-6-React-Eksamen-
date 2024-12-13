@@ -3,10 +3,9 @@ import styles from "./header.module.css";
 
 const AdminNavigation = () => {
   return (
-    <div className={styles.navigation}>
-      <h1 className={styles.logo}>Admin Panel</h1>
-      <ul className={styles.navList}>
-          <>
+    <section>
+      <h1>Admin Panel</h1>
+      <ul>
             <li>
               <NavLink
                 to="/admin/users-cvs-management"
@@ -27,9 +26,8 @@ const AdminNavigation = () => {
            Administrer Cv-er
           </NavLink>
         </li>
-          </>
       </ul>
-    </div>
+    </section>
   );
 };
 

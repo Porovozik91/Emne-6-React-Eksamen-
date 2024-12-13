@@ -3,6 +3,9 @@ import { useDispatch } from "react-redux";
 import { login } from "../../../redux/userSlice"; 
 import { useLazyGetUsersQuery } from "../../../services/userApi"; 
 import hashPassword from "../../../utils/hashPassword"; 
+import styles from "./signIn.module.css";
+import { Link } from "react-router-dom";
+
 
 const SignIn = () => {
   const [username, setUsername] = useState("");
@@ -56,25 +59,32 @@ const SignIn = () => {
   };
 
   return (
-    <div>
+    <section className={styles.signInOverlay}>
       <h2>Logg Inn</h2>
-      <input
+     <form>
+      <label>Brukernavn:</label>
+     <input
         type="text"
         placeholder="Brukernavn"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
+       <label>Passord:</label>
       <input
         type="password"
         placeholder="Passord"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+     </form>
       {error && <p>{error}</p>}
       <button onClick={handleLogin} disabled={loading}>
         {loading ? "Logger inn..." : "Logg inn"}
       </button>
-    </div>
+      <Link to="/">
+      <p>Tilbake til startsiden</p>
+  </Link>
+    </section>
   );
 };
 

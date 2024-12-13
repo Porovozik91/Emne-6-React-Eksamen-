@@ -1,17 +1,14 @@
 import { Outlet } from "react-router-dom";
 import Header from "../../../components/Header/Header";
-import styles from "./adminPage.module.css";
 
 const AdminPage = () => {
   return (
-    <div className={styles.adminLayout}>
+    <section>
       <Header />
-      <div className={styles.content}>
-        <main className={styles.mainContent}>
+        <main>
           <Outlet />
         </main>
-      </div>
-    </div>
+    </section>
   );
 };
 

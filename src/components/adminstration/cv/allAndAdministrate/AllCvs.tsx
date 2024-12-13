@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { RootState } from "../../../../redux/store";
 import {
   useLazyGetAllCvsQuery,
   useUpdateCvMutation,
   useDeleteCvMutation,
-} from "../../../services/cvApi";
-import { useLazyGetUsersQuery } from "../../../services/userApi";
+} from "../../../../services/cvApi";
+import { useLazyGetUsersQuery } from "../../../../services/userApi";
 import CvList from "./CvList";
 import EditCvModal from "./EditCvModal";
-import PdfManager from "./PdfManager";
+import PdfManager from "../pdf/PdfManager";
 import styles from "./AllCvs.module.css";
-import { Cv } from "../../../types/cv.types";
-import { User } from "../../../types/user.types";
-import { CreateCvModal } from "../ManagerModal";
+import { Cv } from "../../../../types/cv.types";
+import { User } from "../../../../types/user.types";
+import { CreateCvModal } from "../../ManagerModal"; 
 
 const AllCvs = () => {
   const role = useSelector((state: RootState) => state.user.role);
@@ -80,9 +80,9 @@ const AllCvs = () => {
   };
 
   return (
-    <section className={styles.container}>
+    <section className={styles.allCvcontainer}>
+      <header>
       <h2>Cv-administrasjon</h2>
-      <div>
       {isCreateCvModalOpen && (
         <CreateCvModal onClose={handleCloseCreateCvModal} />
       )}
@@ -92,7 +92,8 @@ const AllCvs = () => {
      >
        Opprett Cv
        </button>           
-     </div>
+     
+    
       <label>Søk:</label>
       <input
         type="text"
@@ -105,6 +106,7 @@ const AllCvs = () => {
         onChange={handleSearchChange}
         className={styles.searchInput}
       />
+      </header>
       {isLoading && <p>Laster CV-er...</p>}
       <CvList
         cvs={filteredCvs}
@@ -125,6 +127,7 @@ const AllCvs = () => {
         />
       )}
       {pdfCv && <PdfManager cv={pdfCv} onClose={() => setPdfCv(null)} />}
+     
     </section>
   );
 };

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import styles from "./managerModal.module.css";
-import CreateCv from "./cv/CreateCv";
+import CreateCv from "./cv/create/CreateCv";
 import UserCreator from "./userManagement/UserCreator";
 
 interface ModalProps {

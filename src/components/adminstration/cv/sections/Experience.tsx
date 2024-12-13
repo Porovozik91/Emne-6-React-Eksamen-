@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "../createCv.module.css";
+import styles from "../create/createCv.module.css";
 import { Cv } from "../../../../types/cv.types";
 
 interface ExperienceProps {
@@ -53,7 +53,7 @@ function Experience({ experience, onUpdate }: ExperienceProps) {
         <div key={index} className={styles.sectionItem}>
           <label>Stilling:</label>
           <p>{exp.title}</p>
-          <label>Firma:</label>
+          <label>Arbeidsgiver:</label>
           <p>{exp.company}</p>
           <label>Fra år:</label>
           <p>{exp.startYear}</p>
@@ -78,7 +78,7 @@ function Experience({ experience, onUpdate }: ExperienceProps) {
           />
           <input
             type="text"
-            placeholder="Skriv inn firma"
+            placeholder="Skriv inn bedriftsnavn"
             value={newExperience.company}
             onChange={(e) => handleChange("company", e.target.value)}
             className={styles.input}
