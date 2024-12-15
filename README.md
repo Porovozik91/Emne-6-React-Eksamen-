@@ -16,7 +16,7 @@ AllCvs
 Viser og administrerer alle CV-er. CV-data hentes fra API ved bruk av Redux Toolkit Query. Modalkomponenter med useState håndterer redigering og sletting lokalt, mens useDispatch oppdaterer Redux Store. Komponentens gjenbrukbare struktur gjør den enkel å utvide og vedlikeholde. Søk: hjelper med rask filtrering. 
 
 CreateCv 
-Brukere kan opprette egne CV-er gjennom et strukturert skjema som bruker React Hooks som useState og useReducer for kompleks tilstandshåndtering. 
+Brukere kan opprette egne CV-er gjennom et strukturert skjema som bruker React Hooks, med useState for lokal tilstandshåndtering, useSelector for global tilstandshåndtering via Redux, og RootState for typestøtte til useSelector.
 Admin brukere kan velge en bruker og og opprette cv. 
  Skjemaet dekker personalia, utdanning, erfaring, ferdigheter og referanser. CV-er kan genereres som PDF med react-pdf. Skjemaet validerer felter for brukervennlighet. 
 
