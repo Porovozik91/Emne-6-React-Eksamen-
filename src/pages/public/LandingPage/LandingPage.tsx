@@ -8,11 +8,8 @@ const LandingPage = () => {
         <h1>Bygg din perfekte CV</h1>
         <h2>Skap, tilpass, og gjør inntrykk!</h2>
         <p>
-        Med vår dynamiske CV-applikasjon kan du enkelt lage, tilpasse og
-        eksportere CV-en din – alt i én plass! <br /> Tilpass for hver jobb, fremhev
-        dine ferdigheter, og få CV-en i profesjonell PDF på sekunder. <br /> Ingen
-        flere utdatert CV-er – bare én som alltid er klar for neste steg i
-        karrieren!
+       Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio possimus voluptatibus expedita adipisci, aliquam, quaerat ipsum recusandae vero illum autem et ut doloremque? Tempore unde ipsam animi maiores blanditiis dolorem.
+       Officiis, repellendus doloremque amet tempora ducimus nostrum quas molestias ratione optio deserunt natus, inventore eaque, in sequi totam. Perferendis placeat vero, ipsa qui id consequuntur ea in iusto quidem iure?
         </p>
         <Link to="/login">
         <button>Gå til påloggingssiden</button>

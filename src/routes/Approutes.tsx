@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"; // Legg til useState for å kontrollere lasting
+import { useEffect, useState } from "react"; 
 import { useDispatch } from "react-redux";
 import { getCookie, removeCookie } from "../utils/cookieManager";
 import jwtDecoder from "../utils/jwtDecoder";

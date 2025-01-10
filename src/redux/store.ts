@@ -15,9 +15,8 @@ export const store = configureStore({
       .concat(cvApi.middleware)
 });
 
-// Sørg for at dette er inkludert
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-// Legg til en default export
 export default store;
